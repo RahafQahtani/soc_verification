@@ -4,6 +4,7 @@
 //../../Peripherals/uart_uvc/sv/
 
 +define+SOC
+defines.sv
 // ========== wb_uvc ==========
 +incdir+../../Soc/wb_bfm/sv
 ../../Soc/wb_bfm/sv/wb_pkg.sv
@@ -19,6 +20,7 @@
 +incdir+../tests+../sequences
 // ========== spi ==========
 +incdir+../../Peripherals/spi_uvc/sv
+../../Peripherals/spi_uvc/sv/spi_defines.sv
 +incdir+../../Peripherals/spi_uvc/tests
 +incdir+../../Peripherals/spi_uvc/sequences
 +incdir+../../Peripherals/spi_uvc/spi/sv
@@ -39,7 +41,7 @@
 +incdir+../../Soc/tb
 ../../Soc/tb/clkgen.sv           # clock generation module (likely used by others)
 ../../Soc/tb/hw_top.sv           # DUT + interface connections
-../../Soc/tb/defines.sv
+
 ../../Soc/tb/top.sv              # testbench top module (instantiates soc_tb + run_test)
 
 

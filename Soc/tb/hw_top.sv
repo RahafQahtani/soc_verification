@@ -4,12 +4,12 @@ module hw_top;
   logic [31:0]  clock_period;
   logic         run_clock;
 
-logic cs,sclk ; 
+// logic cs,sclk ; 
 
 // uart_if in_uart(clock) ; 
 wb_if in_wb(clock,reset);
-spi_if in_spi1(clock,reset,sclk,cs);
-
+spi_if in_spi1(clock,reset);
+spi_if in_spi2(clock,reset);
 
 //***************************************************
 //   SOC HW
@@ -17,27 +17,7 @@ spi_if in_spi1(clock,reset,sclk,cs);
     wire O_UART_TX_PAD;
      wire I_UART_RX_PAD;
      wire [23:0] gpio_pads; 
-  
-  //spi1 addrs 
-  /*  
-  gpio[19] = spi1_ssl
-  gpio[20] = spi1_ss0
-  gpio[21] = spi1_sck
-  gpio[22] = spi1_miso
-  gpio[23] = spi1_mosi
-  */
- 
 
-// top_rv32i_soc #(
-//     .DMEM_DEPTH(128),
-//     .IMEM_DEPTH(128)
-// ) DUT (
-//     .O_UART_TX_PAD(O_UART_TX_PAD),
-//     .I_UART_RX_PAD(I_UART_RX_PAD),
-//     .IO_GPIO_PAD(gpio_pads),
-//     .CLK_PAD(clock),
-//     .RESET_PAD(reset)
-// );
 
 top_rv32i_soc DUT (
   .CLK_PAD       (clock),
@@ -100,9 +80,12 @@ top_rv32i_soc DUT (
 // end
  assign in_wb.ack = DUT.u_rv32i_soc.wb_s2m_io_ack;
   assign  in_wb.dout =DUT.u_rv32i_soc.wb_s2m_io_dat ;
-  assign cs=DUT.u_rv32i_soc.o_flash_cs_n ;
- assign sclk=DUT.u_rv32i_soc.o_flash_sclk;
+  assign in_spi1.cs=DUT.u_rv32i_soc.o_flash_cs_n ;
+ assign in_spi1.sclk=DUT.u_rv32i_soc.o_flash_sclk;
+   assign in_spi2.cs=DUT.u_rv32i_soc.o_cs_n ;
+ assign in_spi2.sclk=DUT.u_rv32i_soc.o_sclk;
  assign in_spi1.mosi=DUT.u_rv32i_soc.o_flash_mosi;
+ assign in_spi2.mosi=DUT.u_rv32i_soc.o_mosi;
 // `ifdef SOC
 always @(*)begin 
   force DUT.u_rv32i_soc.wb_m2s_io_adr = in_wb.addr;
@@ -114,17 +97,19 @@ always @(*)begin
   force DUT.u_rv32i_soc.wb_m2s_io_stb = in_wb.stb;
   force DUT.u_rv32i_soc.wb_m2s_io_cyc = in_wb.cyc;
   force DUT.u_rv32i_soc.i_flash_miso=in_spi1.miso;
+  force DUT.u_rv32i_soc.i_miso=in_spi2.miso;
 //  force sclk=DUT.u_rv32i_soc.o_flash_sclk;
 //   force cs=DUT.u_rv32i_soc.o_flash_cs_n;
 //     force in_spi1.mosi=DUT.u_rv32i_soc.o_flash_mosi;
 //     force DUT.u_rv32i_soc.i_flash_miso=in_spi1.miso;
- $display("hwtop:[%0t ns] ACK received=%b, for addr = %h, data = %h , cyc=%b,stb=%b", $time,
-             DUT.u_rv32i_soc.wb_s2m_io_ack,DUT.u_rv32i_soc.wb_m2s_io_adr,
-             DUT.u_rv32i_soc.wb_m2s_io_dat, DUT.u_rv32i_soc.wb_m2s_io_cyc,
-             DUT.u_rv32i_soc.wb_m2s_io_stb);
+//  $display("hwtop:[%0t ns] ACK received=%b, for addr = %h, data = %h , cyc=%b,stb=%b", $time,
+//              DUT.u_rv32i_soc.wb_s2m_io_ack,DUT.u_rv32i_soc.wb_m2s_io_adr,
+//              DUT.u_rv32i_soc.wb_m2s_io_dat, DUT.u_rv32i_soc.wb_m2s_io_cyc,
+//              DUT.u_rv32i_soc.wb_m2s_io_stb);
 
 
 end
+
 
 // `else
 //     assign in_wb.addr =  DUT.u_rv32i_soc.wb_m2s_io_adr;

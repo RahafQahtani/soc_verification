@@ -32,7 +32,7 @@ endfunction
  function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
 //TODO: psuedo code
-  scb.ref_model = spiref_model; 
+  scb.spi_ref_model = spiref_model; 
 
 //connect wb_ref to scb
 wb_ref.wb2scb_port.connect(scb.wb_in);
@@ -41,7 +41,7 @@ wb_ref.wb2scb_port.connect(scb.wb_in);
 //connect wb_ref to spiref_model
 wb_ref.wb2spi1ref_port.connect(spiref_model.wb_in);
 
-
+wb_ref.wb2spi2ref_port.connect(spiref_model.wb_in);
 
 
 // hbus_mon.item_collected_port.connect(ro_ref.hbus_in);

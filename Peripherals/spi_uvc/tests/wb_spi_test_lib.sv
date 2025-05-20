@@ -51,8 +51,7 @@ class mcsequencer_basic_test extends base_test;
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
 
-    m_spi_config = spi_config::type_id::create("m_spi_config", this);
-    m_spi_config.Clock_Phase_Pol = 2'b00;
+
 
     uvm_config_db #(spi_config)::set(this, "*", "spi_config", m_spi_config);
 
@@ -74,154 +73,224 @@ endclass : mcsequencer_basic_test
 
 
 //----------------------------------------------------------------
-// TEST: write test 
+// TESTS:
 //----------------------------------------------------------------
-class wbxspi_write_test extends base_test;
 
-  `uvm_component_utils(wbxspi_write_test)
+class wbxspi1_en_test extends base_test;
+
+  `uvm_component_utils(wbxspi1_en_test)
 
   function new(string name = get_type_name(), uvm_component parent = null);
     super.new(name, parent);
   endfunction : new
 
+  task run_phase(uvm_phase phase);
+    uvm_objection obj = phase.get_objection();
+    obj.set_drain_time(this, 100ns);
+  endtask : run_phase
+
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
+      `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
+
+    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence", en_spi1_seq::get_type());
+    uvm_config_wrapper::set(this, $sformatf("%s.clk_rst_env.agent.sequencer.run_phase", m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
+      uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());       
+        uvm_config_db#(string)::set(null, "*", "CUR_SEQ_NAME","en_spi1_seq");      
+        uvm_config_db#(string)::set(null, "*", "PERIPHERAL","SPI");      
+  endfunction : build_phase
+
+endclass : wbxspi1_en_test
+
+class wbxspi2_en_test extends base_test;
+
+  `uvm_component_utils(wbxspi2_en_test)
+
+  function new(string name = get_type_name(), uvm_component parent = null);
+    super.new(name, parent);
+  endfunction : new
+
+  task run_phase(uvm_phase phase);
+    uvm_objection obj = phase.get_objection();
+    obj.set_drain_time(this, 100ns);
+  endtask : run_phase
+
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
+      `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
+
+    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence", en_spi2_seq::get_type());
+    uvm_config_wrapper::set(this, $sformatf("%s.clk_rst_env.agent.sequencer.run_phase", m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
+       uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());
+      uvm_config_db#(string)::set(null, "*", "CUR_SEQ_NAME", "en_spi2_seq");
+      uvm_config_db#(string)::set(null, "*", "PERIPHERAL", "SPI2");
+  endfunction : build_phase
+
+endclass : wbxspi2_en_test
 
 
+class wbxspi1_flags_test extends base_test;
+
+  `uvm_component_utils(wbxspi1_flags_test)
+
+  function new(string name = get_type_name(), uvm_component parent = null);
+    super.new(name, parent);
+  endfunction : new
+
+  task run_phase(uvm_phase phase);
+    uvm_objection obj = phase.get_objection();
+    obj.set_drain_time(this, 100ns);
+  endtask : run_phase
+
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
+      `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
+
+    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence", flag_wbxspi1_seq::get_type());
+    uvm_config_wrapper::set(this, $sformatf("%s.clk_rst_env.agent.sequencer.run_phase", m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
+   uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());
+      uvm_config_db#(string)::set(null, "*", "CUR_SEQ_NAME", "flag_wbxspi1_seq");
+      uvm_config_db#(string)::set(null, "*", "PERIPHERAL", "SPI1");
+  endfunction : build_phase
+
+endclass : wbxspi1_flags_test
+
+class wbxspi2_flags_test extends base_test;
+
+  `uvm_component_utils(wbxspi2_flags_test)
+
+  function new(string name = get_type_name(), uvm_component parent = null);
+    super.new(name, parent);
+  endfunction : new
+
+  task run_phase(uvm_phase phase);
+    uvm_objection obj = phase.get_objection();
+    obj.set_drain_time(this, 100ns);
+  endtask : run_phase
+
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
+      `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
+
+    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence", flag_wbxspi2_seq::get_type());
+    uvm_config_wrapper::set(this, $sformatf("%s.clk_rst_env.agent.sequencer.run_phase", m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
+       uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());
+      uvm_config_db#(string)::set(null, "*", "CUR_SEQ_NAME", "flag_wbxspi2_seq");
+      uvm_config_db#(string)::set(null, "*", "PERIPHERAL", "SPI2");
+  endfunction : build_phase
+
+endclass : wbxspi2_flags_test
+
+class wbxspi1_write_test extends base_test;
+
+  `uvm_component_utils(wbxspi1_write_test)
+
+  function new(string name = get_type_name(), uvm_component parent = null);
+    super.new(name, parent);
+  endfunction : new
 
   task run_phase(uvm_phase phase);
     uvm_objection obj = phase.get_objection();
     obj.set_drain_time(this, 200ns);
   endtask : run_phase
 
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
+      `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
+
+    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence", write_wbxspi1_seq::get_type());
+    uvm_config_wrapper::set(this, $sformatf("%s.clk_rst_env.agent.sequencer.run_phase", m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
+      uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());
+      uvm_config_db#(string)::set(null, "*", "CUR_SEQ_NAME", "write_wbxspi1_seq");
+      uvm_config_db#(string)::set(null, "*", "PERIPHERAL", "SPI1");
+  endfunction : build_phase
+
+endclass : wbxspi1_write_test
+
+class wbxspi2_write_test extends base_test;
+
+  `uvm_component_utils(wbxspi2_write_test)
+
+  function new(string name = get_type_name(), uvm_component parent = null);
+    super.new(name, parent);
+  endfunction : new
+
+  task run_phase(uvm_phase phase);
+    uvm_objection obj = phase.get_objection();
+    obj.set_drain_time(this, 200ns);
+  endtask : run_phase
 
   virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
+      `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
 
+    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence", write_wbxspi2_seq::get_type());
+    uvm_config_wrapper::set(this, $sformatf("%s.clk_rst_env.agent.sequencer.run_phase", m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
+    uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());
+      uvm_config_db#(string)::set(null, "*", "CUR_SEQ_NAME", "write_wbxspi2_seq");
+      uvm_config_db#(string)::set(null, "*", "PERIPHERAL", "SPI2");
+  endfunction : build_phase
 
-    // Set the default sequence for the clock
-    uvm_config_wrapper::set(this, "*mc_seqr*",  "default_sequence", write_wbxspi_seq::get_type()); 
-    
-    //  uvm_config_wrapper::set(
-    //   this, 
-    //   "tb.wb.masters[0].sequencer.main_phase",
-    //   "default_sequence", 
-    //   wb_write_spi1_seq::get_type()
-    // );
+endclass : wbxspi2_write_test
 
-    //   uvm_config_wrapper::set(
-    //   this, 
-    //   "tb.spi1.slave_agent.seqr.run_phase",
-    //   "default_sequence", 
-    //   spi_slave_response_seq::get_type()
-    // );
-    uvm_config_wrapper::set(this, "*clk_rst*", "default_sequence", clk10_rst5_seq::get_type());
+class wbxspi1_read_test extends base_test;
+
+  `uvm_component_utils(wbxspi1_read_test)
+
+  function new(string name = get_type_name(), uvm_component parent = null);
+    super.new(name, parent);
+  endfunction : new
+
+  task run_phase(uvm_phase phase);
+    uvm_objection obj = phase.get_objection();
+    obj.set_drain_time(this, 100ns);
+  endtask : run_phase
+
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
+      `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
+
+    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence", read_wbxspi1_seq::get_type());
+    uvm_config_wrapper::set(this, $sformatf("%s.clk_rst_env.agent.sequencer.run_phase", m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
+     uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());
+      uvm_config_db#(string)::set(null, "*", "CUR_SEQ_NAME", "read_wbxspi1_seq");
+      uvm_config_db#(string)::set(null, "*", "PERIPHERAL", "SPI1");
+  endfunction : build_phase
+
+endclass : wbxspi1_read_test
+
+class wbxspi2_read_test extends base_test;
+
+  `uvm_component_utils(wbxspi2_read_test)
+
+  function new(string name = get_type_name(), uvm_component parent = null);
+    super.new(name, parent);
+  endfunction : new
+
+  task run_phase(uvm_phase phase);
+    uvm_objection obj = phase.get_objection();
+    obj.set_drain_time(this, 100ns);
+  endtask : run_phase
+
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
+      `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
+
+    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence", read_wbxspi2_seq::get_type());
+    uvm_config_wrapper::set(this, $sformatf("%s.clk_rst_env.agent.sequencer.run_phase", m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
+     
+     uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());
+      uvm_config_db#(string)::set(null, "*", "CUR_SEQ_NAME", "read_wbxspi2_seq");
+      uvm_config_db#(string)::set(null, "*", "PERIPHERAL", "SPI2");
+  endfunction : build_phase
    
-
-
-
-  
-
-
-
-    super.build_phase(phase);
-  endfunction : build_phase
-
-endclass : wbxspi_write_test
-
-
-
-//----------------------------------------------------------------
-// TEST: read  test
-//----------------------------------------------------------------
-class wbxspi_read_test extends base_test;
-
-  `uvm_component_utils(wbxspi_read_test)
-
-  function new(string name = get_type_name(), uvm_component parent = null);
-    super.new(name, parent);
-  endfunction : new
-
-
-
-
-  task run_phase(uvm_phase phase);
-    uvm_objection obj = phase.get_objection();
-    obj.set_drain_time(this, 100ns);
-  endtask : run_phase
-
-
- virtual function void build_phase(uvm_phase phase);
-
-    super.build_phase(phase);
-    // Set the default sequence for the clock
-    uvm_config_wrapper::set(this, "*mc_seqr*",  "default_sequence", read_wbxspi_seq::get_type()); 
-    uvm_config_wrapper::set(this, "*clk_rst*", "default_sequence", clk10_rst5_seq::get_type());
-
-
-
-  endfunction : build_phase
-
-
-endclass : wbxspi_read_test
-
-class wbxspi_flags_test extends base_test;
-
-  `uvm_component_utils(wbxspi_flags_test)
-
-  function new(string name = get_type_name(), uvm_component parent = null);
-    super.new(name, parent);
-  endfunction : new
-
-
-
-
-  task run_phase(uvm_phase phase);
-    uvm_objection obj = phase.get_objection();
-    obj.set_drain_time(this, 100ns);
-  endtask : run_phase
-
-
- virtual function void build_phase(uvm_phase phase);
-   super.build_phase(phase);
-	if (!uvm_config_db#(string)::get(this, "", "m_tb_name", m_tb_name))
-			  `uvm_error("CONFIGDB", "Could not find Testbench Name in config DB");
-
-    // Set the default sequence for the clock
-    uvm_config_wrapper::set(this, $sformatf("%s.mcseqr.run_phase", m_tb_name), "default_sequence",flag_wbxspi_seq ::get_type()); 
-    uvm_config_wrapper::set(this,$sformatf( "%s.clk_rst_env.agent.sequencer.run_phase",m_tb_name), "default_sequence", clk10_rst5_seq::get_type());
-
-
-  
-  endfunction : build_phase
-endclass : wbxspi_flags_test
-
-class wbxspi_stress_test extends base_test;
-
-  `uvm_component_utils(wbxspi_stress_test)
-
-  function new(string name = get_type_name(), uvm_component parent = null);
-    super.new(name, parent);
-  endfunction : new
-
-
-
-
-  task run_phase(uvm_phase phase);
-    uvm_objection obj = phase.get_objection();
-    obj.set_drain_time(this, 100ns);
-  endtask : run_phase
-
-
- virtual function void build_phase(uvm_phase phase);
-
-
-    // Set the default sequence for the clock
-    uvm_config_wrapper::set(this, "*mc_seqr.run_phase",  "default_sequence", stress_wbxspi_seq ::get_type()); 
-    uvm_config_wrapper::set(this, "*clk_rst*", "default_sequence", clk10_rst5_seq::get_type());
-
-
-    super.build_phase(phase);
-  endfunction : build_phase
-endclass : wbxspi_stress_test
-
-
-
+endclass : wbxspi2_read_test
 

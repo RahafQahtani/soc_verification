@@ -1,7 +1,7 @@
 rc file Version 1.0
 
 [Design]
-COMPILE_PATH=/mnt/SATA2/Shared_Folder/Rahaf_Soc_verification/Soc/tb
+COMPILE_PATH=/home/Rahaf_Alqahtani/VD_labs/core_ver_git/Soc_verification_1/Soc/tb
 VCS_HOME=/mnt/NVME2/synopsys/vcs/W-2024.09-SP1
 VERDI_HOME=/mnt/NVME2/synopsys/verdi/W-2024.09
 SystemC=FALSE

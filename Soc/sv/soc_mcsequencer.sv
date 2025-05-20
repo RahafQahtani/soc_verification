@@ -6,6 +6,7 @@ class soc_mcsequencer extends uvm_sequencer;
     // uart_rx_sequencer  uart_seqr ; 
     wb_master_sequencer wb_seqr; 
    spi_slave_sequencer spi1_seqr ; 
+   spi_slave_sequencer spi2_seqr ; 
   //--------------------------------------------------------
   //Constructor
   //--------------------------------------------------------
@@ -15,4 +16,9 @@ class soc_mcsequencer extends uvm_sequencer;
   endfunction: new
 
   
+    function void set_sub_seq_name(string name);
+
+        uvm_config_db#(string)::set(null, "*", "CUR_SUB_SEQ_NAME", name);       
+    endfunction
+    
 endclass //router_mcsequencer extends uvm_sequencer

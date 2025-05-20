@@ -1,12 +1,12 @@
-interface spi_if(input logic clock, input logic reset, input logic sclk , input logic cs);
+interface spi_if(input logic clock, input logic reset);
   import uvm_pkg::*;
   `include "uvm_macros.svh"
 
   import spi_pkg::*;
 
   // SPI 
-
-  // logic        cs;
+ logic        sclk;
+  logic        cs;
   logic miso;
   logic        mosi;
   logic cpol, cpha;  // CPOL and CPHA (clock phase and polartiy)
