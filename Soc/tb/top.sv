@@ -36,8 +36,8 @@ initial begin
 
     //=============================================
     // uart_vif_config::set(null,"*tb.uartenv.*","vif",dut.in_uart); 
-    spi_vif_config::set(null,"*.spienv*.slave_agent.*","vif",dut.in_spi1);
-
+    spi_vif_config::set(null,"*.spienv1.slave_agent.*","vif",dut.in_spi1);
+   spi_vif_config::set(null,"*.spienv2.slave_agent.*","vif",dut.in_spi2);
     wb_vif_config::set(null,"*.wbenv.*","vif",dut.in_wb);
     clock_and_reset_vif_config::set(null , "*.clk_rst_env.*" , "vif" , dut.clk_rst_if);
     

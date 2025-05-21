@@ -411,17 +411,17 @@ class wb_flags_spi2_seq extends wb_base_seq;
         rest_rf == 0;
       })
 
-    // `uvm_do_with(req,
-    //   { op_type == wb_write;
-    //     addr == `SPI2_BASE_ADDRESS + `OFFSET * 0;
-    //     din == 8'b00110000;
-    //     rest_rf == 1;
-    //   })
+    `uvm_do_with(req,
+      { op_type == wb_write;
+        addr == `SPI2_BASE_ADDRESS + `OFFSET * 0;
+        din == 8'b00110000;
+        rest_rf == 1;
+      })
 
-    // `uvm_do_with(req,
-    //   { op_type == wb_read;
-    //     addr == `SPI2_BASE_ADDRESS + `OFFSET * 1;
-    //     rest_rf == 1;
-    //   })
+    `uvm_do_with(req,
+      { op_type == wb_read;
+        addr == `SPI2_BASE_ADDRESS + `OFFSET * 1;
+        rest_rf == 1;
+      })
   endtask : body
 endclass : wb_flags_spi2_seq

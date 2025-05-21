@@ -997,14 +997,14 @@ defines.sv
 ../../RivRtos/src/pads/top_rv32i_soc.sv
 133
 which_declare=declare -f
-XDG_SESSION_ID=185
+XDG_SESSION_ID=225
 XDG_RUNTIME_DIR=/run/user/1042
 XDG_DATA_DIRS=/home/Rahaf_Alqahtani/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:/var/lib/snapd/desktop
 XA_HOME=/mnt/NVME2/synopsys/xa/W-2024.09-SP1
 VUI_HOME=/mnt/NVME2/synopsys/vui/W-2024.09-SP2
 VTRAN_HOME=/mnt/NVME2/synopsys/vtran/W-2024.09-SP2
-VSCODE_IPC_HOOK_CLI=/run/user/1042/vscode-ipc-2a008778-f821-461a-9108-c1ecbcb024eb.sock
-VSCODE_GIT_IPC_HANDLE=/run/user/1042/vscode-git-f8a703172e.sock
+VSCODE_IPC_HOOK_CLI=/run/user/1042/vscode-ipc-4190b0f8-833e-467e-a539-e3efb5db33d3.sock
+VSCODE_GIT_IPC_HANDLE=/run/user/1042/vscode-git-a0a21ce30b.sock
 VSCODE_GIT_ASKPASS_NODE=/home/Rahaf_Alqahtani/.vscode-server/cli/servers/Stable-848b80aeb52026648a8ff9f7c45a9b0a80641e2e/server/node
 VSCODE_GIT_ASKPASS_MAIN=/home/Rahaf_Alqahtani/.vscode-server/cli/servers/Stable-848b80aeb52026648a8ff9f7c45a9b0a80641e2e/server/extensions/git/dist/askpass-main.js
 VSCODE_GIT_ASKPASS_EXTRA_ARGS=
@@ -1039,8 +1039,8 @@ SYN_HOME=/mnt/NVME2/synopsys/syn
 STARRC_HOME=/mnt/NVME2/synopsys/starrc
 SSL_CERT_FILE=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
 SSL_CERT_DIR=/etc/pki/tls/certs
-SSH_CONNECTION=192.168.1.37 49544 192.168.1.8 22
-SSH_CLIENT=192.168.1.37 49544 22
+SSH_CONNECTION=192.168.1.37 35658 192.168.1.8 22
+SSH_CLIENT=192.168.1.37 35658 22
 SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
 SPYGLASS_HOME=/mnt/NVME2/synopsys/spyglass/W-2024.09-SP1/SPYGLASS_HOME
 SPIKE_PATH=/usr/bin
@@ -1087,8 +1087,8 @@ MODULEPATH_modshare=/usr/share/Modules/modulefiles:2:/etc/modulefiles:2:/usr/sha
 MODULEPATH=/etc/scl/modulefiles:/etc/scl/modulefiles:/etc/scl/modulefiles:/usr/share/Modules/modulefiles:/etc/modulefiles:/usr/share/modulefiles
 MFLAGS=
 MECHANICAL_ENGINE_ANALYSIS_FUSION_HOME=/mnt/NVME2/synopsys/mechanical_engine_analysis_fusion
-MAKE_TERMOUT=/dev/pts/132
-MAKE_TERMERR=/dev/pts/132
+MAKE_TERMOUT=/dev/pts/73
+MAKE_TERMERR=/dev/pts/73
 MAKELEVEL=1
 MAKEFLAGS=
 LOADEDMODULES=
@@ -1141,12 +1141,12 @@ ALE_HOME=/mnt/NVME2/synopsys/ale
 1747722518 soc_tb.sv
 1747732742 ../sequences/soc_mcseqs_lib.sv
 1747742346 ../../Peripherals/spi_uvc/sequences/wb_spi_mcseqs_lib.sv
-1747750701 ../../Peripherals/spi_uvc/sequences/wb_spi_sequences.sv
+1747812085 ../../Peripherals/spi_uvc/sequences/wb_spi_sequences.sv
 1747655101 ../sequences/wb_soc_sequences.sv
 1747730958 ../sv/soc_mcsequencer.sv
-1747747163 ../../Soc/soc_ref_module/soc_ref_env.sv
-1747744870 ../../Soc/soc_ref_module/soc_scb.sv
-1747750612 ../../Soc/soc_ref_module/wb_ref_model.sv
+1747811992 ../../Soc/soc_ref_module/soc_ref_env.sv
+1747810893 ../../Soc/soc_ref_module/soc_scb.sv
+1747812001 ../../Soc/soc_ref_module/wb_ref_model.sv
 1747655100 ../../Peripherals/spi_uvc/wb_x_spi_module/sv/spi_module.sv
 1747655100 ../../Peripherals/spi_uvc/wb_x_spi_module/sv/scoreboard.sv
 1747727808 ../../Peripherals/spi_uvc/wb_x_spi_module/sv/wb_x_spi_module.sv
@@ -1383,7 +1383,7 @@ ALE_HOME=/mnt/NVME2/synopsys/ale
 1747655101 ../../RivRtos/src/soc/core/alignment_units.sv
 1747655101 ../../RivRtos/src/soc/debug/debug_pkg.sv
 1747655101 ../../RivRtos/src/soc/core/lib.sv
-1747722915 ../../Soc/tb/top.sv
+1747811663 ../../Soc/tb/top.sv
 1747749972 ../../Soc/tb/hw_top.sv
 1747655101 ../../Soc/tb/clkgen.sv
 1747655101 ../../Soc/soc_ref_module/soc_pkg.sv
@@ -1407,5 +1407,5 @@ ALE_HOME=/mnt/NVME2/synopsys/ale
 1733286010 /mnt/NVME2/synopsys/vcs/W-2024.09-SP1/linux64/lib/liberrorinf.so
 1733286000 /mnt/NVME2/synopsys/vcs/W-2024.09-SP1/linux64/lib/libsnpsmalloc.so
 1733285992 /mnt/NVME2/synopsys/vcs/W-2024.09-SP1/linux64/lib/libvfs.so
-1747750714 simv.daidir
+1747812096 simv.daidir
 -1 partitionlib

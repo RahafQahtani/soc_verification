@@ -33,3 +33,62 @@ Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 5, Actual: 5 | Sta
 --------------------------------------------------
 Total Matched Packets : 2
 Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi1_flags_test | SEQ: flag_wbxspi1_seq
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 88, Actual: 88 | Status: PASSED
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 5, Actual: 5 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 2
+Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi1_flags_test | SEQ: flag_wbxspi1_seq
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 88, Actual: 88 | Status: PASSED
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 5, Actual: 5 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 2
+Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi1_write_test | SEQ: write_wbxspi1_seq
+Sub Seq: SPI Data Compare | Peripheral: SPI1 | Result : Expected: 05, Actual: 05 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi1_flags_test | SEQ: flag_wbxspi1_seq
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 88, Actual: 88 | Status: PASSED
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 5, Actual: 5 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 2
+Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi1_flags_test | SEQ: flag_wbxspi1_seq
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 88, Actual: 88 | Status: PASSED
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 5, Actual: 5 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 2
+Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi2_flags_test | SEQ: flag_wbxspi2_seq
+Sub Seq: Compare SPSR | Peripheral: SPI2 | Result : Expected: 5, Actual: 88 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wbxspi2_flags_test | SEQ: flag_wbxspi2_seq
+Sub Seq: Compare SPSR | Peripheral: SPI2 | Result : Expected: 88, Actual: 88 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi2_flags_test | SEQ: flag_wbxspi2_seq
+Sub Seq: Compare SPSR | Peripheral: SPI2 | Result : Expected: 88, Actual: 88 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi2_flags_test | SEQ: flag_wbxspi2_seq
+Sub Seq: Compare SPSR | Peripheral: SPI2 | Result : Expected: 88, Actual: 88 | Status: PASSED
+Sub Seq: Compare SPSR | Peripheral: SPI2 | Result : Expected: 5, Actual: 5 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 2
+Total Mismatched Packets   : 0

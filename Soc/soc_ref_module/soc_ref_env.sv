@@ -12,7 +12,8 @@ class soc_ref_env extends uvm_env;
 wb_ref_model wb_ref;
 // router_scb ro_scb  ;
 // hbus_monitor hbus_mon ;  
-  wb_x_spi_module spiref_model;
+  wb_x_spi_module spiref_model1;
+  wb_x_spi_module spiref_model2;
 soc_scb scb ; 
 //  router_reference ro_ref;
    function void build_phase(uvm_phase phase);
@@ -20,8 +21,8 @@ soc_scb scb ;
 scb = soc_scb::type_id::create("scb", this);
 
 wb_ref = wb_ref_model::type_id::create("wb_ref", this) ; 
-spiref_model = wb_x_spi_module::type_id::create("spiref_model", this);
-
+spiref_model1 = wb_x_spi_module::type_id::create("spiref_model1", this);
+spiref_model2 = wb_x_spi_module::type_id::create("spiref_model2", this);
 
 // ro_ref = router_reference::type_id::create("ro_ref", this) ; 
 // ro_scb = router_scb::type_id::create("ro_scb", this) ; 
@@ -32,22 +33,21 @@ endfunction
  function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
 //TODO: psuedo code
-  scb.spi_ref_model = spiref_model; 
-
+  scb.spi_ref_model = spiref_model1; 
+    scb.spi_ref_model = spiref_model2; 
 //connect wb_ref to scb
 wb_ref.wb2scb_port.connect(scb.wb_in);
 
 
-//connect wb_ref to spiref_model
-wb_ref.wb2spi1ref_port.connect(spiref_model.wb_in);
-
-wb_ref.wb2spi2ref_port.connect(spiref_model.wb_in);
+//connect wb_ref to spiref_model1
+wb_ref.wb2spi1ref_port.connect(spiref_model1.wb_in);
+wb_ref.wb2spi2ref_port.connect(spiref_model2.wb_in);
+// wb_ref.wb2spi2ref_port.connect(spiref_model1.wb_in);
 
 
 // hbus_mon.item_collected_port.connect(ro_ref.hbus_in);
 // ro_ref.yapp_valid_port.connect(ro_scb.yapp_in) ; 
 
-// scb.ref_model=spiref_model ; // IDK???????????
 
 
 endfunction
