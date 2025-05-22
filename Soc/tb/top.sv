@@ -27,7 +27,19 @@ import soc_pkg::* ;
 
 
 hw_top dut();
+logic [31:0] inst_mem [8192];
+//need to read from the inst.hex
+initial begin
+//`ifdef VCS_SIM
+                $readmemh("../../core_tests/inst_formatted.hex", inst_mem);
+  //  `endif     
+force dut.DUT.u_rv32i_soc.inst_mem_inst.tsmc_32k_inst.u0.mem_core_array = inst_mem;
+for (int i=0;   i<10; ++i) begin
+$display("\nINST MEME[%d]: %h",i, inst_mem[i]);
+    
+end
 
+end
 
 initial begin
     //=============================================
@@ -46,15 +58,23 @@ run_test("base_test") ;
 end
 
 
+initial begin
+
+$monitor(dut.in_wb.ack) ; 
+$monitor(dut.in_wb.addr) ; 
+$monitor(dut.in_wb.din) ; 
+$monitor(dut.in_wb.cyc) ; 
+
+end
 
 initial begin
 $dumpfile("test.vcd");
 $dumpvars();
 end
 //
- initial begin
-#100000
- $finish;end
+//  initial begin
+// #100000
+//  $finish;end
 
 
 endmodule

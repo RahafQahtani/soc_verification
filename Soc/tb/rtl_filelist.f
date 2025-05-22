@@ -78,11 +78,20 @@
 ../../RivRtos/src/soc/debug/dm.sv
 ../../RivRtos/src/soc/debug/debug_top.sv
 
-# SRAM
-../../RivRtos/src/soc/core/sram_wrapper.sv
 
-# ROM / data memory
-../../RivRtos/src/soc/core/data_mem.sv
+
+# sram 
+# verilog model for simulation
+ ../../RivRtos/src/soc/sram/tsmc_32k_rtl.v
+ ../../RivRtos/src/soc/sram/tsmc_8k_rtl.v
+ ../../RivRtos/src/soc/core/sram_wrapper.sv
+
+# rom
+
+# system verilog models for prototyping
+ ../../RivRtos/src/soc/rom/tsmc_rom_1k_rtl.v
+ ../../RivRtos/src/soc/core/data_mem.sv
+
 
 # SoC Top
 ../../RivRtos/src/soc/io_mux.sv
@@ -90,6 +99,7 @@
 
 # Pads (commented out if unused)
 ../../RivRtos/src/pads/top_rv32i_soc.sv
+../../RivRtos/src/pads/tpz018nv_270a/tpz018nv.v
 
 # Testbench
 //../../RivRtos/src/tb/rv32i_soc_tb.sv

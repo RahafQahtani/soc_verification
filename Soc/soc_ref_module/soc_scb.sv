@@ -33,6 +33,9 @@ class soc_scb extends uvm_scoreboard;
   test_result_s results[$];
   test_result_s result;
 
+mailbox #(int) comp_mbox;
+int numOfComp = 0;
+
 
   function new(string name = "soc_scb", uvm_component parent);
     super.new(name, parent);
@@ -41,6 +44,17 @@ class soc_scb extends uvm_scoreboard;
     wb_in  = new("wb_in", this);
     spi_ref_model = wb_x_spi_module::type_id::create("spi_ref_model", this);
   endfunction
+
+
+function void build_phase(uvm_phase phase);
+  super.build_phase(phase);
+
+if (!uvm_config_db#(mailbox#(int))::get(this, "", "comp_mbox", comp_mbox))
+  `uvm_fatal("SCB", "Failed to get comp_mbox")
+
+endfunction
+
+
 
   function void write_spi1(spi_transaction t);
     `uvm_info("SCOREBOARD", $sformatf("Received SPI1 Transaction: %s", t.sprint()), UVM_MEDIUM)
@@ -79,6 +93,8 @@ class soc_scb extends uvm_scoreboard;
      end
     spi_ref_model.wb_queue.push_back(t);
      compare_spi_transactions();
+     
+     
      end 
     
   endfunction
@@ -119,7 +135,11 @@ function void compare_spi_transactions();
         `uvm_warning("SCOREBOARD", "Unhandled address in comparison");
          end 
     endcase
-   
+   //after compare READING
+       numOfComp++;  //for the C tests
+      comp_mbox.try_put(numOfComp);
+
+
   end 
   
   end 

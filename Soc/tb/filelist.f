@@ -4,6 +4,10 @@
 //../../Peripherals/uart_uvc/sv/
 
 +define+SOC
++define+CORE
++define+USE_SRAM
++define+VCS_SIM
+//+define+tracer
 defines.sv
 // ========== wb_uvc ==========
 +incdir+../../Soc/wb_bfm/sv

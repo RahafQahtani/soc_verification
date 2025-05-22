@@ -8,6 +8,7 @@
 0 17 this.wb_spi2_read 14
 0 3 seq 7
 0 5 alloc 8
+0 10 spi1_write 17
 0 17 this.wb_spi2_flag 16
 0 18 this.wb_spi1_write 10
 0 7 param_t 5

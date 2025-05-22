@@ -86,8 +86,9 @@ top_rv32i_soc DUT (
  assign in_spi2.sclk=DUT.u_rv32i_soc.o_sclk;
  assign in_spi1.mosi=DUT.u_rv32i_soc.o_flash_mosi;
  assign in_spi2.mosi=DUT.u_rv32i_soc.o_mosi;
-// `ifdef SOC
+`ifndef CORE
 always @(*)begin 
+  // $display("\n\nCHE\n\n");
   force DUT.u_rv32i_soc.wb_m2s_io_adr = in_wb.addr;
   force DUT.u_rv32i_soc.wb_m2s_io_dat = in_wb.din;
   //there is no sel signal in the interface of the wb
@@ -111,15 +112,15 @@ always @(*)begin
 end
 
 
-// `else
-//     assign in_wb.addr =  DUT.u_rv32i_soc.wb_m2s_io_adr;
-//    assign in_wb.din =  DUT.u_rv32i_soc.wb_m2s_io_dat;
-//   //  assign in_wb.sel =  DUT.u_rv32i_soc.wb_m2s_io_sel;
-//    assign in_wb.we =  DUT.u_rv32i_soc.wb_m2s_io_we;
-//    assign in_wb.cyc =  DUT.u_rv32i_soc.wb_m2s_io_cyc;
-//    assign in_wb.stb =  DUT.u_rv32i_soc.wb_m2s_io_stb;
+`else
+    assign in_wb.addr =  DUT.u_rv32i_soc.wb_m2s_io_adr;
+   assign in_wb.din =  DUT.u_rv32i_soc.wb_m2s_io_dat;
+  //  assign in_wb.sel =  DUT.u_rv32i_soc.wb_m2s_io_sel;
+   assign in_wb.we =  DUT.u_rv32i_soc.wb_m2s_io_we;
+   assign in_wb.cyc =  DUT.u_rv32i_soc.wb_m2s_io_cyc;
+   assign in_wb.stb =  DUT.u_rv32i_soc.wb_m2s_io_stb;
   
-// `endif
+`endif
 // // assign in_spi.cs    = gpio_pads[19]; // or gpio_pads[20], based on which slave
 // assign in_spi1.sclk  = gpio_pads[21];
 // assign in_spi1.miso  = gpio_pads[22]; // input from slave

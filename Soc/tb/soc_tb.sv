@@ -14,11 +14,16 @@ spi_env spienv2;
 soc_mcsequencer mcseqr ; 
   // spi_module spiref;
 
+
+
+
+
     function new(string name = "soc_tb",uvm_component parent);
             super.new(name, parent);
            `uvm_info(get_type_name(), "Inside Constructor!", UVM_LOW)
     endfunction //new()
 
+mailbox #(int) comp_mbox;
    function void build_phase(uvm_phase phase);
     super.build_phase(phase);
    uvm_config_int::set(this, "*wbenv*", "num_masters", 1);
@@ -34,8 +39,15 @@ soc_mcsequencer mcseqr ;
     soc_refenv = soc_ref_env::type_id::create("soc_refenv", this); 
     mcseqr = soc_mcsequencer::type_id::create("mcseqr", this); 
 
+
+comp_mbox = new;
+uvm_config_db#(mailbox#(int))::set(null, "*", "comp_mbox", comp_mbox);
+
+
+
     endfunction
 
+// mailbox#(int) test_mbox;
 
 
  function void connect_phase(uvm_phase phase);
