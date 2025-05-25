@@ -128,7 +128,7 @@ endtask
   function logic [7:0] get_SPSR();
 
     `uvm_info("SPSR_MON_1", $sformatf("SPSR Updated: %0h ",
-                                SPSR), UVM_LOW)
+                                SPSR), UVM_MEDIUM)
  return SPSR;
   endfunction
 

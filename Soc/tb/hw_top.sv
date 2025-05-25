@@ -220,10 +220,6 @@ module hw_top;
     assign VSS = 0;
 
 
-   logic SPI1_SS0;
-   logic SPI1_SCK;
-   logic SPI1_MOSI;
-   logic SPI1_MISO;
 
 
     assign CLK_PAD = clock;
@@ -270,14 +266,18 @@ top_rv32i_soc DUT (
 );
 
 
-assign SPI1_SS0=IO_DATA_PAD[11];
- assign SPI1_SCK = IO_DATA_PAD[10];
- assign IO_DATA_PAD[9]= SPI1_MISO;
- assign SPI1_MOSI = IO_DATA_PAD[8];
-assign in_spi1.mosi = SPI1_MOSI;
- assign SPI1_MISO = in_spi1.miso;
-assign in_spi1.sclk =SPI1_SCK;
-assign in_spi1.cs=SPI1_SS0;
+assign  in_spi1.cs=IO_DATA_PAD[11];
+ assign in_spi1.sclk = IO_DATA_PAD[10];
+ assign IO_DATA_PAD[9]= in_spi1.miso;
+ assign in_spi1.mosi = IO_DATA_PAD[8];
+ assign  in_spi2.cs=IO_DATA_PAD[3];
+ assign in_spi2.sclk = IO_DATA_PAD[2];
+ assign IO_DATA_PAD[1]= in_spi2.miso;
+ assign in_spi2.mosi = IO_DATA_PAD[0];
+// assign in_spi1.mosi = SPI1_MOSI;
+//  assign SPI1_MISO = in_spi1.miso;
+// assign in_spi1.sclk =SPI1_SCK;
+// assign in_spi1.cs=SPI1_SS0;
 
 // assign in_spi2.cs=DUT.u_rv32i_soc.o_cs_n ;
 //  assign in_spi2.sclk=DUT.u_rv32i_soc.o_sclk;

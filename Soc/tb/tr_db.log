@@ -1,35 +1,35 @@
   CREATE_STREAM @0.000 ns {NAME:clk10_rst5_seq T:TVM SCOPE:uvm_test_top.tb_soc.clk_rst_env.agent.sequencer STREAM:1}
-BEGIN @0.000 ns {TXH:2 STREAM:1 NAME:clk10_rst5_seq TIME=0.000 ns  TYPE="Begin_No_Parent, Link" LABEL:"" DESC="Object ID: \clock_and_reset_pkg::clk10_rst5_seq @1 (@1477)
+BEGIN @0.000 ns {TXH:2 STREAM:1 NAME:clk10_rst5_seq TIME=0.000 ns  TYPE="Begin_No_Parent, Link" LABEL:"" DESC="Object ID: \clock_and_reset_pkg::clk10_rst5_seq @1 (@1478)
 Sequencer ID: \clock_and_reset_pkg::clock_and_reset_sequencer @1 (@695)
 Phase: run
 "}
-  CREATE_STREAM @0.000 ns {NAME:flag_wbxspi1_seq T:TVM SCOPE:uvm_test_top.tb_soc.mcseqr STREAM:3}
-BEGIN @0.000 ns {TXH:4 STREAM:3 NAME:flag_wbxspi1_seq TIME=0.000 ns  TYPE="Begin_No_Parent, Link" LABEL:"" DESC="Object ID: \top::flag_wbxspi1_seq @1 (@1483)
+  CREATE_STREAM @0.000 ns {NAME:flag_wbxspi2_seq T:TVM SCOPE:uvm_test_top.tb_soc.mcseqr STREAM:3}
+BEGIN @0.000 ns {TXH:4 STREAM:3 NAME:flag_wbxspi2_seq TIME=0.000 ns  TYPE="Begin_No_Parent, Link" LABEL:"" DESC="Object ID: \top::flag_wbxspi2_seq @1 (@1484)
 Sequencer ID: \top::soc_mcsequencer @1 (@552)
 Phase: run
 "}
-BEGIN @0.000 ns {TXH:5 STREAM:1 NAME:cr TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \clock_and_reset_pkg::clock_and_reset_sequence @1 (@1503)
+BEGIN @0.000 ns {TXH:5 STREAM:1 NAME:cr TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \clock_and_reset_pkg::clock_and_reset_sequence @1 (@1504)
 Sequencer ID: \clock_and_reset_pkg::clock_and_reset_sequencer @1 (@695)
 Phase: N/A
 "}
   LINK @0.000 ns {TXH1:2 TXH2:5 RELATION=child}
-  CREATE_STREAM @0.000 ns {NAME:flag_wbxspi1_seq T:TVM SCOPE:uvm_test_top.tb_soc.wbenv.masters[0].sequencer STREAM:6}
-BEGIN @0.000 ns {TXH:7 STREAM:6 NAME:wb_spi1_flag TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \top::wb_flags_spi1_seq @1 (@1507)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+  CREATE_STREAM @0.000 ns {NAME:flag_wbxspi2_seq T:TVM SCOPE:uvm_test_top.tb_soc.wbenv.masters[0].sequencer STREAM:6}
+BEGIN @0.000 ns {TXH:7 STREAM:6 NAME:wb_spi2_flag TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \top::wb_flags_spi2_seq @1 (@1508)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 Phase: N/A
 "}
   LINK @0.000 ns {TXH1:4 TXH2:7 RELATION=child}
-  CREATE_STREAM @0.000 ns {NAME:flag_wbxspi1_seq T:TVM SCOPE:uvm_test_top.tb_soc.spienv1.slave_agent.seqr STREAM:8}
-BEGIN @0.000 ns {TXH:9 STREAM:8 NAME:spi_seq TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \spi_pkg::spi_slave_response_seq @1 (@1512)
-Sequencer ID: \spi_pkg::spi_slave_sequencer @1 (@995)
+  CREATE_STREAM @0.000 ns {NAME:flag_wbxspi2_seq T:TVM SCOPE:uvm_test_top.tb_soc.spienv2.slave_agent.seqr STREAM:8}
+BEGIN @0.000 ns {TXH:9 STREAM:8 NAME:spi_seq TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \spi_pkg::spi_slave_response_seq @1 (@1513)
+Sequencer ID: \spi_pkg::spi_slave_sequencer @2 (@1169)
 Phase: N/A
 "}
   LINK @0.000 ns {TXH1:4 TXH2:9 RELATION=child}
-BEGIN @0.000 ns {TXH:10 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @1 (@1521)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @0.000 ns {TXH:10 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @1 (@1522)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @0.000 ns {TXH1:7 TXH2:10 RELATION=child}
-BEGIN @0.000 ns {TXH:11 STREAM:1 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \clock_and_reset_pkg::clock_and_reset_sequence_item @1 (@1517)
+BEGIN @0.000 ns {TXH:11 STREAM:1 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \clock_and_reset_pkg::clock_and_reset_sequence_item @1 (@1518)
 Sequencer ID: \clock_and_reset_pkg::clock_and_reset_sequencer @1 (@695)
 "}
   LINK @0.000 ns {TXH1:5 TXH2:11 RELATION=child}
@@ -47,30 +47,30 @@ FREE @0.000 ns {TXH:5}
   SET_ATTR @25.000 ns {TXH:10 NAME:addr VALUE:536871180   RADIX:UVM_HEX BITS=32}
   SET_ATTR @25.000 ns {TXH:10 NAME:din VALUE:4294967295   RADIX:UVM_HEX BITS=32}
   SET_ATTR @25.000 ns {TXH:10 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
-  SET_ATTR @25.000 ns {TXH:10 NAME:rest_rf VALUE:1   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @25.000 ns {TXH:10 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
   SET_ATTR @25.000 ns {TXH:10 NAME:valid_sb VALUE:0   RADIX:UVM_HEX BITS=1}
   SET_ATTR @25.000 ns {TXH:10 NAME:transaction_id VALUE:1   RADIX:UVM_DEC BITS=32}
 END @25.000 ns {TXH:10 TIME=0.000 ns}
 FREE @25.000 ns {TXH:10}
-BEGIN @25.000 ns {TXH:12 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @4 (@1659)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @25.000 ns {TXH:12 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @4 (@1660)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @25.000 ns {TXH1:7 TXH2:12 RELATION=child}
   SET_ATTR @45.000 ns {TXH:12 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
-  SET_ATTR @45.000 ns {TXH:12 NAME:addr VALUE:536871424   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @45.000 ns {TXH:12 NAME:addr VALUE:536871552   RADIX:UVM_HEX BITS=32}
   SET_ATTR @45.000 ns {TXH:12 NAME:din VALUE:112   RADIX:UVM_HEX BITS=32}
   SET_ATTR @45.000 ns {TXH:12 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
   SET_ATTR @45.000 ns {TXH:12 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
-  SET_ATTR @45.000 ns {TXH:12 NAME:valid_sb VALUE:1   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @45.000 ns {TXH:12 NAME:valid_sb VALUE:0   RADIX:UVM_HEX BITS=1}
   SET_ATTR @45.000 ns {TXH:12 NAME:transaction_id VALUE:2   RADIX:UVM_DEC BITS=32}
 END @45.000 ns {TXH:12 TIME=0.000 ns}
 FREE @45.000 ns {TXH:12}
-BEGIN @45.000 ns {TXH:13 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @7 (@1674)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @45.000 ns {TXH:13 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @7 (@1675)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @45.000 ns {TXH1:7 TXH2:13 RELATION=child}
-BEGIN @55.000 ns {TXH:14 STREAM:8 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \spi_pkg::spi_transaction @3 (@1525)
-Sequencer ID: \spi_pkg::spi_slave_sequencer @1 (@995)
+BEGIN @55.000 ns {TXH:14 STREAM:8 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \spi_pkg::spi_transaction @3 (@1526)
+Sequencer ID: \spi_pkg::spi_slave_sequencer @2 (@1169)
 "}
   LINK @55.000 ns {TXH1:9 TXH2:14 RELATION=child}
   SET_ATTR @55.000 ns {TXH:14 NAME:data_in VALUE:0   RADIX:UVM_HEX BITS=8}
@@ -81,7 +81,7 @@ FREE @55.000 ns {TXH:14}
 END @55.000 ns {TXH:9 TIME=0.000 ns}
 FREE @55.000 ns {TXH:9}
   SET_ATTR @65.000 ns {TXH:13 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
-  SET_ATTR @65.000 ns {TXH:13 NAME:addr VALUE:536871440   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @65.000 ns {TXH:13 NAME:addr VALUE:536871568   RADIX:UVM_HEX BITS=32}
   SET_ATTR @65.000 ns {TXH:13 NAME:din VALUE:1   RADIX:UVM_HEX BITS=32}
   SET_ATTR @65.000 ns {TXH:13 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
   SET_ATTR @65.000 ns {TXH:13 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
@@ -89,77 +89,77 @@ FREE @55.000 ns {TXH:9}
   SET_ATTR @65.000 ns {TXH:13 NAME:transaction_id VALUE:3   RADIX:UVM_DEC BITS=32}
 END @65.000 ns {TXH:13 TIME=0.000 ns}
 FREE @65.000 ns {TXH:13}
-BEGIN @65.000 ns {TXH:15 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @10 (@1690)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @65.000 ns {TXH:15 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @10 (@1691)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @65.000 ns {TXH1:7 TXH2:15 RELATION=child}
   SET_ATTR @85.000 ns {TXH:15 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
-  SET_ATTR @85.000 ns {TXH:15 NAME:addr VALUE:536871432   RADIX:UVM_HEX BITS=32}
-  SET_ATTR @85.000 ns {TXH:15 NAME:din VALUE:2   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @85.000 ns {TXH:15 NAME:addr VALUE:536871560   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @85.000 ns {TXH:15 NAME:din VALUE:1   RADIX:UVM_HEX BITS=32}
   SET_ATTR @85.000 ns {TXH:15 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
   SET_ATTR @85.000 ns {TXH:15 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
-  SET_ATTR @85.000 ns {TXH:15 NAME:valid_sb VALUE:0   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @85.000 ns {TXH:15 NAME:valid_sb VALUE:1   RADIX:UVM_HEX BITS=1}
   SET_ATTR @85.000 ns {TXH:15 NAME:transaction_id VALUE:4   RADIX:UVM_DEC BITS=32}
 END @85.000 ns {TXH:15 TIME=0.000 ns}
 FREE @85.000 ns {TXH:15}
-BEGIN @85.000 ns {TXH:16 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @13 (@1705)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @85.000 ns {TXH:16 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @13 (@1706)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @85.000 ns {TXH1:7 TXH2:16 RELATION=child}
   SET_ATTR @105.000 ns {TXH:16 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
-  SET_ATTR @105.000 ns {TXH:16 NAME:addr VALUE:536871432   RADIX:UVM_HEX BITS=32}
-  SET_ATTR @105.000 ns {TXH:16 NAME:din VALUE:3   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @105.000 ns {TXH:16 NAME:addr VALUE:536871560   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @105.000 ns {TXH:16 NAME:din VALUE:2   RADIX:UVM_HEX BITS=32}
   SET_ATTR @105.000 ns {TXH:16 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
   SET_ATTR @105.000 ns {TXH:16 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
   SET_ATTR @105.000 ns {TXH:16 NAME:valid_sb VALUE:1   RADIX:UVM_HEX BITS=1}
   SET_ATTR @105.000 ns {TXH:16 NAME:transaction_id VALUE:5   RADIX:UVM_DEC BITS=32}
 END @105.000 ns {TXH:16 TIME=0.000 ns}
 FREE @105.000 ns {TXH:16}
-BEGIN @105.000 ns {TXH:17 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @16 (@1720)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @105.000 ns {TXH:17 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @16 (@1721)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @105.000 ns {TXH1:7 TXH2:17 RELATION=child}
   SET_ATTR @125.000 ns {TXH:17 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
-  SET_ATTR @125.000 ns {TXH:17 NAME:addr VALUE:536871432   RADIX:UVM_HEX BITS=32}
-  SET_ATTR @125.000 ns {TXH:17 NAME:din VALUE:4   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @125.000 ns {TXH:17 NAME:addr VALUE:536871560   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @125.000 ns {TXH:17 NAME:din VALUE:3   RADIX:UVM_HEX BITS=32}
   SET_ATTR @125.000 ns {TXH:17 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
   SET_ATTR @125.000 ns {TXH:17 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
-  SET_ATTR @125.000 ns {TXH:17 NAME:valid_sb VALUE:1   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @125.000 ns {TXH:17 NAME:valid_sb VALUE:0   RADIX:UVM_HEX BITS=1}
   SET_ATTR @125.000 ns {TXH:17 NAME:transaction_id VALUE:6   RADIX:UVM_DEC BITS=32}
 END @125.000 ns {TXH:17 TIME=0.000 ns}
 FREE @125.000 ns {TXH:17}
-BEGIN @125.000 ns {TXH:18 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @19 (@1735)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @125.000 ns {TXH:18 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @19 (@1736)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @125.000 ns {TXH1:7 TXH2:18 RELATION=child}
   SET_ATTR @145.000 ns {TXH:18 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
-  SET_ATTR @145.000 ns {TXH:18 NAME:addr VALUE:536871432   RADIX:UVM_HEX BITS=32}
-  SET_ATTR @145.000 ns {TXH:18 NAME:din VALUE:5   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @145.000 ns {TXH:18 NAME:addr VALUE:536871560   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @145.000 ns {TXH:18 NAME:din VALUE:4   RADIX:UVM_HEX BITS=32}
   SET_ATTR @145.000 ns {TXH:18 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
   SET_ATTR @145.000 ns {TXH:18 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
   SET_ATTR @145.000 ns {TXH:18 NAME:valid_sb VALUE:1   RADIX:UVM_HEX BITS=1}
   SET_ATTR @145.000 ns {TXH:18 NAME:transaction_id VALUE:7   RADIX:UVM_DEC BITS=32}
 END @145.000 ns {TXH:18 TIME=0.000 ns}
 FREE @145.000 ns {TXH:18}
-BEGIN @145.000 ns {TXH:19 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @22 (@1750)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @145.000 ns {TXH:19 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @22 (@1751)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @145.000 ns {TXH1:7 TXH2:19 RELATION=child}
   SET_ATTR @165.000 ns {TXH:19 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
-  SET_ATTR @165.000 ns {TXH:19 NAME:addr VALUE:536871432   RADIX:UVM_HEX BITS=32}
-  SET_ATTR @165.000 ns {TXH:19 NAME:din VALUE:6   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @165.000 ns {TXH:19 NAME:addr VALUE:536871560   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @165.000 ns {TXH:19 NAME:din VALUE:5   RADIX:UVM_HEX BITS=32}
   SET_ATTR @165.000 ns {TXH:19 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
   SET_ATTR @165.000 ns {TXH:19 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
-  SET_ATTR @165.000 ns {TXH:19 NAME:valid_sb VALUE:1   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @165.000 ns {TXH:19 NAME:valid_sb VALUE:0   RADIX:UVM_HEX BITS=1}
   SET_ATTR @165.000 ns {TXH:19 NAME:transaction_id VALUE:8   RADIX:UVM_DEC BITS=32}
 END @165.000 ns {TXH:19 TIME=0.000 ns}
 FREE @165.000 ns {TXH:19}
-BEGIN @245.000 ns {TXH:20 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @25 (@1765)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @245.000 ns {TXH:20 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @25 (@1766)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @245.000 ns {TXH1:7 TXH2:20 RELATION=child}
   SET_ATTR @265.000 ns {TXH:20 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
-  SET_ATTR @265.000 ns {TXH:20 NAME:addr VALUE:536871440   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @265.000 ns {TXH:20 NAME:addr VALUE:536871568   RADIX:UVM_HEX BITS=32}
   SET_ATTR @265.000 ns {TXH:20 NAME:din VALUE:0   RADIX:UVM_HEX BITS=32}
   SET_ATTR @265.000 ns {TXH:20 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
   SET_ATTR @265.000 ns {TXH:20 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
@@ -167,22 +167,48 @@ Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
   SET_ATTR @265.000 ns {TXH:20 NAME:transaction_id VALUE:9   RADIX:UVM_DEC BITS=32}
 END @265.000 ns {TXH:20 TIME=0.000 ns}
 FREE @265.000 ns {TXH:20}
-BEGIN @265.000 ns {TXH:21 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @28 (@1784)
-Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1331)
+BEGIN @265.000 ns {TXH:21 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @28 (@1785)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
 "}
   LINK @265.000 ns {TXH1:7 TXH2:21 RELATION=child}
   SET_ATTR @285.000 ns {TXH:21 NAME:op_type VALUE:33603684309229924   RADIX:UVM_STRING BITS=56}
-  SET_ATTR @285.000 ns {TXH:21 NAME:addr VALUE:536871428   RADIX:UVM_HEX BITS=32}
-  SET_ATTR @285.000 ns {TXH:21 NAME:din VALUE:1119707586   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @285.000 ns {TXH:21 NAME:addr VALUE:536871556   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @285.000 ns {TXH:21 NAME:din VALUE:1776894417   RADIX:UVM_HEX BITS=32}
   SET_ATTR @285.000 ns {TXH:21 NAME:dout VALUE:136   RADIX:UVM_HEX BITS=32}
   SET_ATTR @285.000 ns {TXH:21 NAME:rest_rf VALUE:0   RADIX:UVM_HEX BITS=1}
-  SET_ATTR @285.000 ns {TXH:21 NAME:valid_sb VALUE:1   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @285.000 ns {TXH:21 NAME:valid_sb VALUE:0   RADIX:UVM_HEX BITS=1}
   SET_ATTR @285.000 ns {TXH:21 NAME:transaction_id VALUE:10   RADIX:UVM_DEC BITS=32}
 END @285.000 ns {TXH:21 TIME=0.000 ns}
 FREE @285.000 ns {TXH:21}
-END @285.000 ns {TXH:7 TIME=0.000 ns}
-FREE @285.000 ns {TXH:7}
-END @285.000 ns {TXH:4 TIME=0.000 ns}
-FREE @285.000 ns {TXH:4}
+BEGIN @285.000 ns {TXH:22 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @31 (@1800)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
+"}
+  LINK @285.000 ns {TXH1:7 TXH2:22 RELATION=child}
 END @300.000 ns {TXH:2 TIME=0.000 ns}
 FREE @300.000 ns {TXH:2}
+  SET_ATTR @305.000 ns {TXH:22 NAME:op_type VALUE:8602543204856329317   RADIX:UVM_STRING BITS=64}
+  SET_ATTR @305.000 ns {TXH:22 NAME:addr VALUE:536871552   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @305.000 ns {TXH:22 NAME:din VALUE:48   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @305.000 ns {TXH:22 NAME:dout VALUE:x   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @305.000 ns {TXH:22 NAME:rest_rf VALUE:1   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @305.000 ns {TXH:22 NAME:valid_sb VALUE:0   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @305.000 ns {TXH:22 NAME:transaction_id VALUE:11   RADIX:UVM_DEC BITS=32}
+END @305.000 ns {TXH:22 TIME=0.000 ns}
+FREE @305.000 ns {TXH:22}
+BEGIN @305.000 ns {TXH:23 STREAM:6 NAME:req TIME=0.000 ns  TYPE="Begin_End, Link" LABEL:"" DESC="Object ID: \wb_pkg::wb_transaction @34 (@1815)
+Sequencer ID: \wb_pkg::wb_master_sequencer @1 (@1332)
+"}
+  LINK @305.000 ns {TXH1:7 TXH2:23 RELATION=child}
+  SET_ATTR @325.000 ns {TXH:23 NAME:op_type VALUE:33603684309229924   RADIX:UVM_STRING BITS=56}
+  SET_ATTR @325.000 ns {TXH:23 NAME:addr VALUE:536871556   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @325.000 ns {TXH:23 NAME:din VALUE:3973193868   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @325.000 ns {TXH:23 NAME:dout VALUE:5   RADIX:UVM_HEX BITS=32}
+  SET_ATTR @325.000 ns {TXH:23 NAME:rest_rf VALUE:1   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @325.000 ns {TXH:23 NAME:valid_sb VALUE:1   RADIX:UVM_HEX BITS=1}
+  SET_ATTR @325.000 ns {TXH:23 NAME:transaction_id VALUE:12   RADIX:UVM_DEC BITS=32}
+END @325.000 ns {TXH:23 TIME=0.000 ns}
+FREE @325.000 ns {TXH:23}
+END @325.000 ns {TXH:7 TIME=0.000 ns}
+FREE @325.000 ns {TXH:7}
+END @325.000 ns {TXH:4 TIME=0.000 ns}
+FREE @325.000 ns {TXH:4}
