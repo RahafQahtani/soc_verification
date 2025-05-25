@@ -3,27 +3,31 @@
 # Compilation Flags
 -timescale=1ns/10ps
 -sverilog
++define+DMEM_DEPTH=2048
++define+DMEM_DEPTH=8192
 
-# Defines
+
+#+define+PD_BUILD
+#+define+SG
+#+define+BOOT
 +define+VCS_SIM   
++define+USE_SRAM
 +define+tracer
+#+define+pqc
 
-# Include directories
-+incdir+../../RivRtos/src
-
-# lib that many modules access (compile first)
+# lib that many module accesses should be compiled first
 ../../RivRtos/src/soc/core/lib.sv
 ../../RivRtos/src/soc/debug/debug_pkg.sv
 
 # Core files
 ../../RivRtos/src/soc/core/alignment_units.sv
 ../../RivRtos/src/soc/core/alu_control.sv
-../../RivRtos/src/soc/core/mul.sv
-../../RivRtos/src/soc/core/div.sv
+../../RivRtos/src/soc/core/mul_unit.sv
+../../RivRtos/src/soc/core/div_unit.sv
 ../../RivRtos/src/soc/core/branch_controller.sv
 ../../RivRtos/src/soc/core/csr_file.sv
 ../../RivRtos/src/soc/core/imm_gen.sv
-../../RivRtos/src/soc/core/main_control.sv
+../../RivRtos/src/soc/core/decode_control.sv
 ../../RivRtos/src/soc/core/reg_file.sv
 ../../RivRtos/src/soc/core/rom.sv
 ../../RivRtos/src/soc/core/forwarding_unit.sv
@@ -31,9 +35,10 @@
 ../../RivRtos/src/soc/core/pipeline_controller.sv
 ../../RivRtos/src/soc/core/decompressor.sv
 ../../RivRtos/src/soc/core/iadu.sv
-../../RivRtos/src/soc/core/atomic_extension.sv
+../../RivRtos/src/soc/core/atomic_access_controller.sv
 ../../RivRtos/src/soc/core/exception_encoder.sv
 ../../RivRtos/src/soc/core/alu.sv
+
 ../../RivRtos/src/soc/core/data_path.sv
 ../../RivRtos/src/soc/core/control_unit.sv
 ../../RivRtos/src/soc/core/core_dbg_fsm.sv
@@ -49,7 +54,7 @@
 ../../RivRtos/src/soc/uncore/gpio/bidirec.sv
 ../../RivRtos/src/soc/uncore/gpio/gpio_top.sv
 ../../RivRtos/src/soc/uncore/spi/fifo4.v
-../../RivRtos/src/soc/uncore/spi/simple_spi_top.v
+../../RivRtos/src/soc/uncore/spi/simple_spi.sv
 ../../RivRtos/src/soc/uncore/uart/uart_defines.v
 ../../RivRtos/src/soc/uncore/uart/raminfr.v
 ../../RivRtos/src/soc/uncore/uart/uart_receiver.v
@@ -73,32 +78,34 @@
 ../../RivRtos/src/soc/uncore/plic/plic_core.sv
 ../../RivRtos/src/soc/uncore/plic/plic_top.sv
 
+
 # Debug Unit 
 ../../RivRtos/src/soc/debug/dtm.sv
 ../../RivRtos/src/soc/debug/dm.sv
 ../../RivRtos/src/soc/debug/debug_top.sv
 
-# SRAM
-../../RivRtos/src/soc/core/sram_wrapper.sv
+# sram 
+# verilog model for simulation
+../../RivRtos/src/soc/core/sram_32k_wrapper.sv
 
-# ROM / data memory
+# rom
+
+# system verilog models for prototyping
 ../../RivRtos/src/soc/core/data_mem.sv
 
-# SoC Top
+
+# rv32i soc top
 ../../RivRtos/src/soc/io_mux.sv
 ../../RivRtos/src/soc/rv32i_soc.sv
 
-# Pads (commented out if unused)
+# pad library and top module file 
+#../../RivRtos/src/pads/tpz018nv_270a/tpz018nv.v
 ../../RivRtos/src/pads/top_rv32i_soc.sv
 
-# Testbench
-//../../RivRtos/src/tb/rv32i_soc_tb.sv
-//../../RivRtos/src/tb/rv32i_soc_plic_tb.sv
-//../../RivRtos/src/tb/rv32i_soc_jtag_tb.sv
-//../../RivRtos/src/tb/rv32_soc_with_pad_tb.sv
-
-// ========== pads dir ==========
-//+incdir+/home/Reda_Alhashem/shared_folder/soc-rtl/pads/tpz018nv_270a
-///home/Reda_Alhashem/shared_folder/soc-rtl/pads/tpz018nv_270a/tpz018nv.v
+# Testbench files
 
 
+
+
+
+# Optionally, include any other files you want for the simulation.

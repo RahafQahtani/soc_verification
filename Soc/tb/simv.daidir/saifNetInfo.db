@@ -1,4 +1,7 @@
-22
+23
+rv32i_soc
+sel_boot_rom
+Scal
 sram_32k_wrapper
 CLK
 Scal

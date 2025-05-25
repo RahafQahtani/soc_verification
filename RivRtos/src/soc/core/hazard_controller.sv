@@ -1,4 +1,4 @@
-module hazard_handler (
+module hazard_controller (
     input wire pc_sel_mem,
     input wire exe_use_rs1_id,
     input wire exe_use_rs2_id,
@@ -30,4 +30,4 @@ module hazard_handler (
                                 &   (((rd_exe == rs1_id) & exe_use_rs1_id) | ((rd_exe == rs2_id) & exe_use_rs2_id));
                    
 
-endmodule : hazard_handler
+endmodule : hazard_controller

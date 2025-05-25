@@ -20,7 +20,7 @@ module rv32i_soc_fpag_top (
 
     parameter DMEM_DEPTH = 4096;
     parameter IMEM_DEPTH = 16384*4;
-    parameter NO_OF_GPIO_PINS = 24; 
+    parameter NO_OF_GPIO_PINS = 32; 
 
 
     
@@ -79,7 +79,7 @@ module rv32i_soc_fpag_top (
 
     assign oen_gpio = 24'h00FFFF;
 
-`ifndef VIVADO_BUILD
+`ifndef USE_FPGA_JTAG
     bit tck_i; 
     bit tdi_i; 
     bit tms_i = 1; 
@@ -140,12 +140,14 @@ module rv32i_soc_fpag_top (
 //         end    
 //    endgenerate
 
-
+    
     rv32i_soc #(
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_DEPTH(IMEM_DEPTH),
         .NO_OF_GPIO_PINS(NO_OF_GPIO_PINS)
     ) soc_inst (
+        .o_uart1_tx(o_uart_tx),
+        .i_uart1_rx(i_uart_rx),
         .*
     );
 

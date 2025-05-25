@@ -49,7 +49,11 @@ class enable_spi_core extends wb_base_seq;
 
   virtual task body();
     `uvm_info(get_type_name(), "Executing sequence", UVM_LOW)
-
+     `uvm_do_with(req,
+      { op_type == wb_write;
+        addr == `GPIO_BASE_ADDRESS + `OFFSET * 3;
+        din == 32'hffffffff;
+      })
     `uvm_do_with(req,
       { op_type == wb_write;
         addr == `SPI1_BASE_ADDRESS + `OFFSET * 0;
@@ -101,7 +105,11 @@ class wb_write_spi1_seq extends wb_base_seq;
 
   virtual task body();
     `uvm_info(get_type_name(), "Executing sequence", UVM_LOW)
-
+       `uvm_do_with(req,
+      { op_type == wb_write;
+        addr == `GPIO_BASE_ADDRESS + `OFFSET * 3;
+        din == 32'hffffffff;
+      })
     `uvm_do_with(req,
       { op_type == wb_write;
         addr == `SPI1_BASE_ADDRESS + `OFFSET * 0;
@@ -170,7 +178,7 @@ class wb_write_spi2_seq extends wb_base_seq;
       { op_type == wb_write;
         addr == `SPI2_BASE_ADDRESS + `OFFSET * 2;
         din == 8'b00011111;
-        rest_rf == 1;
+        rest_rf == 0;
       })
 
     #160;
@@ -219,7 +227,7 @@ class wb_read_spi1_seq extends wb_base_seq;
     `uvm_do_with(req,
       { op_type == wb_write;
         addr == `SPI1_BASE_ADDRESS + `OFFSET * 2;
-        din == 8'h00;
+        din == 8'h10;
         rest_rf == 0;
       })
 
@@ -277,7 +285,7 @@ class wb_read_spi2_seq extends wb_base_seq;
     `uvm_do_with(req,
       { op_type == wb_write;
         addr == `SPI2_BASE_ADDRESS + `OFFSET * 2;
-        din == 8'b000000;
+        din == 8'b000010;
         rest_rf == 0;
       })
 
@@ -308,7 +316,11 @@ class wb_flags_spi1_seq extends wb_base_seq;
 
   virtual task body();
     `uvm_info(get_type_name(), "Executing sequence", UVM_LOW)
-
+     `uvm_do_with(req,
+      { op_type == wb_write;
+        addr == `GPIO_BASE_ADDRESS + `OFFSET * 3;
+        din == 32'hffffffff;
+      })
     `uvm_do_with(req,
       { op_type == wb_write;
         addr == `SPI1_BASE_ADDRESS + `OFFSET * 0;
@@ -327,7 +339,7 @@ class wb_flags_spi1_seq extends wb_base_seq;
       `uvm_do_with(req,
         { op_type == wb_write;
           addr == `SPI1_BASE_ADDRESS + `OFFSET * 2;
-          din == 8'h00 + i;
+          din == 8'h01 + i;
           rest_rf == 0;
         })
     end
@@ -347,18 +359,18 @@ class wb_flags_spi1_seq extends wb_base_seq;
         rest_rf == 0;
       })
 
-    `uvm_do_with(req,
-      { op_type == wb_write;
-        addr == `SPI1_BASE_ADDRESS + `OFFSET * 0;
-        din == 8'b00110000;
-        rest_rf == 1;
-      })
+    // `uvm_do_with(req,
+    //   { op_type == wb_write;
+    //     addr == `SPI1_BASE_ADDRESS + `OFFSET * 0;
+    //     din == 8'b00110000;
+    //     rest_rf == 0;
+    //   })
 
-    `uvm_do_with(req,
-      { op_type == wb_read;
-        addr == `SPI1_BASE_ADDRESS + `OFFSET * 1;
-        rest_rf == 1;
-      })
+    // `uvm_do_with(req,
+    //   { op_type == wb_read;
+    //     addr == `SPI1_BASE_ADDRESS + `OFFSET * 1;
+    //     rest_rf == 1;
+    //   })
   endtask : body
 endclass : wb_flags_spi1_seq
 

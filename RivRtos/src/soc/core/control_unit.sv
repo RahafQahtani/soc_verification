@@ -1,7 +1,6 @@
 `default_nettype wire
 module control_unit(
     input logic [6:0] opcode_id,
-    input logic fun7_5_exe,
     input logic [6:0] fun7_exe,
     input logic [2:0] fun3_exe, fun3_mem,
     input logic zero_mem,
@@ -24,6 +23,7 @@ module control_unit(
     output logic sys_inst_id,
     output logic is_atomic_id,
     output logic illegal_inst_id,
+    output logic is_montgomery_id,
 
 
     // alu_controller output
@@ -93,18 +93,18 @@ module control_unit(
         .r_type(r_type_id),
         .sys_inst(sys_inst_id),
         .is_atomic(is_atomic_id),
-        .illegal_inst(illegal_inst_id)
+        .illegal_inst(illegal_inst_id),
+        .is_montgomery(is_montgomery_id)
     );
 
     wire exe_use_rs1_id;
     wire exe_use_rs2_id;
 
     assign exe_use_rs1_id = ~(auipc_id | lui_id);
-    assign exe_use_rs2_id = r_type_id | branch_id | is_atomic_id;
+    assign exe_use_rs2_id = r_type_id | branch_id | is_atomic_id | is_montgomery_id;
 
     alu_control alu_controller_inst (
         .fun3(fun3_exe),
-        .fun7_5(fun7_5_exe),
         .fun7(fun7_exe),
         .alu_op(alu_op_exe),
         .alu_ctrl(alu_ctrl_exe)
@@ -131,7 +131,7 @@ module control_unit(
     logic mem_read_exe;
     assign mem_read_exe = mem_to_reg_exe;
     
-    hazard_handler hazard_handler_inst (
+    hazard_controller hazard_handler_inst (
         .*
     );
 

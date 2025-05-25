@@ -1,5 +1,4 @@
 import riscv_types::*;
-
 module data_path #(
     parameter DMEM_DEPTH = 1024, 
     parameter IMEM_DEPTH = 1024
@@ -9,13 +8,8 @@ module data_path #(
 
     // outputs to controller 
     output logic [6:0] opcode_id,
-    output logic fun7_5_exe,
     // additional signal has been added 
     output logic [6:0] fun7_exe,
-    output logic [4:0] func5_exe,
-    // 2 bits are being added for selection between SHA instructions 
-    output logic [4:0] sha_sel_exe,
-    output logic [6:0] opcode_exe,
     output logic [2:0] fun3_exe, fun3_mem,
     output logic zero_mem,
     output logic [1:0] alu_op_exe,
@@ -37,6 +31,7 @@ module data_path #(
     input logic sys_inst_id,
     input logic is_atomic_id,
     input logic illegal_inst_id,
+    input logic is_montgomery_id,
 
     // modified
     input logic [9:0] alu_ctrl_exe,
@@ -105,9 +100,7 @@ module data_path #(
     output logic trap,
     output logic trap_ret,
 
-    output logic [31:0] current_pc_id,
     output logic [31:0] next_pc_if1,
-    output logic        prv_fetch_busy,
     output logic        ebreak_inst_mem,
 
     input  logic        core_halted,
@@ -122,12 +115,35 @@ module data_path #(
 
     output logic inst_valid_wb,
     output logic [31:0] cinst_pc,
-    output logic no_jump,
     input logic [31:0] dpc,
     input logic dbg_ret,
-    input logic dont_trap
+    input logic dont_trap,
+    input logic core_running
+
+`ifdef tracer
+    ,output logic [31:0] rvfi_insn,
+    output logic [4:0]  rvfi_rs1_addr,
+    output logic [4:0]  rvfi_rs2_addr,
+    output logic [31:0] rvfi_rs1_rdata,
+    output logic [31:0] rvfi_rs2_rdata,
+    output logic [4:0]  rvfi_rd_addr,
+    output logic [31:0] rvfi_rd_wdata,
+    output logic [31:0] rvfi_pc_rdata,
+    output logic [31:0] rvfi_pc_wdata,
+    output logic [31:0] rvfi_mem_addr,
+    output logic [31:0] rvfi_mem_wdata,
+    output logic [31:0] rvfi_mem_rdata,
+    output logic        rvfi_valid
+`endif
 );
     
+    // 2 bits are being added for selection between SHA instructions 
+    logic [4:0]  func5_exe;
+    logic [4:0]  sha_sel_exe;
+    logic [6:0]  opcode_exe;
+    logic        no_jump;
+    logic [31:0] current_pc_id;
+    logic        prv_fetch_busy;
     logic [31:0] inst_id;
     logic [31:0] current_pc_exe, current_pc_mem;
     logic [31:0] reg_rdata1_id, reg_rdata1_exe, reg_rdata1_mem;
@@ -139,7 +155,8 @@ module data_path #(
     logic [31:0] corrected_pc_if1, corrected_pc_if2;
     logic [31:0] pc_jump_exe, pc_jump_mem;
     logic [31:0] non_mem_result_wb;
-    logic [31:0] tvec, trap_base_pc, trap_pc, trap_return_pc;
+    logic [31:0] tvec, trap_base_pc, trap_pc,  trap_return_pc;
+    logic [32:0] trap_pc_tmp;
     logic [5:0]  trap_cause;
     logic trap_ret_id, trap_ret_exe, trap_ret_mem;
 
@@ -159,7 +176,7 @@ module data_path #(
     logic wfi_inst_id;  
     logic pc_sel_wb; // used in the trap logic 
     logic is_comp_if2;
-    logic is_illegal_if2;
+
 
     // atomic extension 
     logic is_atomic_exe;
@@ -194,11 +211,11 @@ module data_path #(
     logic illegal_inst_exe, illegal_inst_mem;
     logic store_amo_addr_malign_mem;
 
-    logic [31:0] crypto_alu_result_exe;
 
     logic inst_valid_if2, inst_valid_id, inst_valid_exe, inst_valid_mem;
 
     logic ebreak_inst_id, ebreak_inst_exe;
+    logic is_montgomery_exe;
 
 
     `ifdef tracer 
@@ -220,7 +237,8 @@ module data_path #(
     assign pc_plus_4_if1 = hold_pc           ? (corrected_pc_if1) : (corrected_pc_if1 + 4);
     assign pc_minus_2_if1 = current_pc_if1 - 2;
     assign trap_base_pc = { tvec[31:2], 2'b00 };
-    assign trap_pc = (tvec[1:0] == 2'b01) ? (trap_base_pc + (trap_cause << 2)) : trap_base_pc;
+    assign trap_pc_tmp  = (tvec[1:0] == 2'b01) ? (trap_base_pc + (trap_cause << 2)) : {1'b0,trap_base_pc};
+    assign trap_pc      = trap_pc_tmp[31:0];
 
     assign no_jump = ~(trap | trap_ret | pc_sel_mem); 
     logic [31:0] next_pc_mux_1_out;
@@ -232,7 +250,7 @@ module data_path #(
         .in1(pc_jump_mem),
         .in2(trap_return_pc),
         .in3(trap_pc),
-        .out(next_pc_mux_1_out)
+        .out_(next_pc_mux_1_out)
     );
 
 
@@ -242,13 +260,14 @@ module data_path #(
         .sel(dbg_ret),
         .in0(next_pc_mux_1_out),
         .in1(dpc),
-        .out(next_pc_if1)
+        .out_(next_pc_if1)
     );
 
 
     // ============================================
     //               Program Counter
     // ============================================
+
     n_bit_reg #( // TODO might need a register with clear
         .n(32),
         `ifdef BOOT
@@ -261,11 +280,13 @@ module data_path #(
 	             .RESET_VALUE(32'h10000000)
 		`endif
             //.RESET_VALUE(32'hFFFFF000)
-        `elsif VIVADO_SIM
+    `elsif VIVADO_SIM
             .RESET_VALUE(32'h10000000)
-        `else
+	`elsif tracer
+            .RESET_VALUE(32'h80000000)
+    `else
             .RESET_VALUE(32'hfffff000)
-        `endif
+    `endif
     ) PC_inst (
         .clk(clk),
         .reset_n(reset_n),
@@ -282,29 +303,26 @@ module data_path #(
     
     logic if_id_reg_en_ff;
     logic if_id_reg_clr_ff;
-    n_bit_reg #(
+    n_bit_reg_wo_en #(
         .n(1)
     ) if_id_reg_en_ff_inst (
         .*,
         .data_i(if_id_reg_en),
-        .data_o(if_id_reg_en_ff),
-        .wen(1'b1)
+        .data_o(if_id_reg_en_ff)
     );
-    n_bit_reg #(
+    n_bit_reg_wo_en #(
         .n(1)
     ) if_id_reg_clr_ff_inst (
         .*,
         .data_i(if_id_reg_clr),
-        .data_o(if_id_reg_clr_ff),
-        .wen(1'b1)
+        .data_o(if_id_reg_clr_ff)
     );
 
 
     if1_if2_reg_t if1_if2_bus_i, if1_if2_bus_o;
 
     assign if1_if2_bus_i = {
-        corrected_pc_if1,
-        pc_plus_4_if1
+        corrected_pc_if1
     };
 
     n_bit_reg_wclr #(
@@ -319,7 +337,6 @@ module data_path #(
     );
 
     assign current_pc_if2  = if1_if2_bus_o.current_pc;
-    // assign pc_plus_4_if2   = if1_if2_bus_o.pc_plus_4;
 
 
     // ============================================   
@@ -354,7 +371,6 @@ module data_path #(
         .i_decode_busy(~if_id_reg_en),
         .o_inst(inst_if2_uncomp),
         .o_is_comp(is_comp_if2),
-        .o_is_illegal(is_illegal_if2),
         .o_hold(hold_pc),
         .o_pc_corrected(corrected_pc_if2),
         .o_increment_pc_by_2(increment_pc_by_2),
@@ -389,11 +405,11 @@ module data_path #(
         .data_o(if2_id_bus_o)
     );
 
+
     assign current_pc_id  = if2_id_bus_o.current_pc;
     assign pc_plus_4_id   = if2_id_bus_o.pc_plus_4;
     assign inst_id        = if2_id_bus_o.inst;
     assign inst_valid_id  = if2_id_bus_o.inst_valid;
-
     // ============================================
     //                Decode Stage 
     // ============================================
@@ -404,7 +420,6 @@ module data_path #(
     logic [6:0]  fun7_id;
     logic [2:0]  fun3_id;
     logic [11:0] fun12_id;
-    logic        fun7_5_id;
 
     // additional signal has been added 
     logic [4:0] func5_id;
@@ -418,7 +433,6 @@ module data_path #(
     assign fun3_id     = inst_id[14:12];
     assign fun7_id     = inst_id[31:25];
     assign opcode_id   = inst_id[6:0];
-    assign fun7_5_id   = fun7_id[5];
     assign csr_addr_id = inst_id[31:20];
     assign fun12_id    = inst_id[31:20];
 
@@ -465,7 +479,7 @@ module data_path #(
 
     // Immediate unit (decode stage_)
     imm_gen imm_gen_inst (
-        .inst(inst_id),
+        .inst(inst_id[31:7]),
         .j_type(jal_id),
         .b_type(branch_id),
         .s_type(mem_write_id),
@@ -480,7 +494,7 @@ module data_path #(
         .sel(forward_rd1_id),
         .in0(reg_rdata1),
         .in1(reg_wdata_wb),
-        .out(reg_rdata1_id)
+        .out_(reg_rdata1_id)
     );
 
     // forwarding mux for rd2 (decode stage)
@@ -488,7 +502,7 @@ module data_path #(
         .sel(forward_rd2_id),
         .in0(reg_rdata2),
         .in1(reg_wdata_wb),
-        .out(reg_rdata2_id)
+        .out_(reg_rdata2_id)
     );  
 
     // ============================================
@@ -505,7 +519,6 @@ module data_path #(
         rs2_id,
         rd_id, 
         fun3_id,
-        fun7_5_id,
         fun7_id, 
         func5_id,
         sha_sel_id,
@@ -534,7 +547,8 @@ module data_path #(
         ecall_inst_id,
         illegal_inst_id,
         inst_valid_id,
-        ebreak_inst_id
+        ebreak_inst_id,
+        is_montgomery_id
         `ifdef tracer 
             ,inst_id
         `endif 
@@ -558,8 +572,6 @@ module data_path #(
     assign rs2_exe         = id_exe_bus_o.rs2;
     assign rd_exe          = id_exe_bus_o.rd; 
     assign fun3_exe        = id_exe_bus_o.fun3;
-    assign fun7_5_exe      = id_exe_bus_o.fun7_5;
-
     assign fun7_exe        = id_exe_bus_o.fun7;
     // additional signals are being added for AES 
     assign func5_exe       = id_exe_bus_o.fun5;
@@ -572,26 +584,27 @@ module data_path #(
     assign csr_addr_exe    = id_exe_bus_o.csr_addr;
 
     // control signals
-    assign reg_write_exe   = id_exe_bus_o.reg_write;
-    assign mem_write_exe   = id_exe_bus_o.mem_write;
-    assign mem_to_reg_exe  = id_exe_bus_o.mem_to_reg;
-    assign branch_exe      = id_exe_bus_o.branch;
-    assign alu_src_exe     = id_exe_bus_o.alu_src;
-    assign jump_exe        = id_exe_bus_o.jump;
-    assign lui_exe         = id_exe_bus_o.lui; 
-    assign auipc_exe       = id_exe_bus_o.auipc;
-    assign jal_exe         = id_exe_bus_o.jal;
-    assign alu_op_exe      = id_exe_bus_o.alu_op;
-    assign csr_inst_exe    = id_exe_bus_o.csr_inst;
-    assign csr_en_exe      = id_exe_bus_o.csr_en;
-    assign trap_ret_exe    = id_exe_bus_o.trap_ret;
-    assign is_atomic_exe   = id_exe_bus_o.is_atomic;
-    assign is_mul_exe      = id_exe_bus_o.is_mul;
-    assign is_div_exe      = id_exe_bus_o.is_div;
-    assign ecall_exe       = id_exe_bus_o.ecall;
-    assign illegal_inst_exe = id_exe_bus_o.illegal_inst; 
-    assign inst_valid_exe  = id_exe_bus_o.inst_valid;
-    assign ebreak_inst_exe = id_exe_bus_o.ebreak_inst;
+    assign reg_write_exe     = id_exe_bus_o.reg_write;
+    assign mem_write_exe     = id_exe_bus_o.mem_write;
+    assign mem_to_reg_exe    = id_exe_bus_o.mem_to_reg;
+    assign branch_exe        = id_exe_bus_o.branch;
+    assign alu_src_exe       = id_exe_bus_o.alu_src;
+    assign jump_exe          = id_exe_bus_o.jump;
+    assign lui_exe           = id_exe_bus_o.lui; 
+    assign auipc_exe         = id_exe_bus_o.auipc;
+    assign jal_exe           = id_exe_bus_o.jal;
+    assign alu_op_exe        = id_exe_bus_o.alu_op;
+    assign csr_inst_exe      = id_exe_bus_o.csr_inst;
+    assign csr_en_exe        = id_exe_bus_o.csr_en;
+    assign trap_ret_exe      = id_exe_bus_o.trap_ret;
+    assign is_atomic_exe     = id_exe_bus_o.is_atomic;
+    assign is_mul_exe        = id_exe_bus_o.is_mul;
+    assign is_div_exe        = id_exe_bus_o.is_div;
+    assign ecall_exe         = id_exe_bus_o.ecall;
+    assign illegal_inst_exe  = id_exe_bus_o.illegal_inst; 
+    assign inst_valid_exe    = id_exe_bus_o.inst_valid;
+    assign ebreak_inst_exe   = id_exe_bus_o.ebreak_inst;
+    assign is_montgomery_exe = id_exe_bus_o.is_montgomery;
 
     `ifdef tracer
     assign inst_exe        = id_exe_bus_o.inst;
@@ -612,14 +625,19 @@ module data_path #(
     logic        exe_mem_reg_en_ff;
     logic        exe_mem_reg_en_drop;
     logic        exe_mem_reg_en_rise;
-    always_ff @(posedge clk) begin 
-        exe_mem_reg_en_ff <= exe_mem_reg_en;
+    always_ff @(posedge clk, negedge reset_n) begin 
+        if(~reset_n) exe_mem_reg_en_ff <= 'b0;
+        else exe_mem_reg_en_ff <= exe_mem_reg_en;
     end
     assign exe_mem_reg_en_drop =  exe_mem_reg_en_ff & ~exe_mem_reg_en;
     assign exe_mem_reg_en_rise = ~exe_mem_reg_en_ff &  exe_mem_reg_en;
 
-    always_ff @(posedge clk) begin 
-        if(exe_mem_reg_en_drop) begin 
+    always_ff @(posedge clk, negedge reset_n) begin 
+        if(~reset_n) begin 
+            rdata1_frw_exe_tmp_ff <= 'b0;
+            rdata2_frw_exe_tmp_ff <= 'b0;
+        end
+        else if(exe_mem_reg_en_drop) begin 
             rdata1_frw_exe_tmp_ff <= rdata1_frw_exe_tmp;
             rdata2_frw_exe_tmp_ff <= rdata2_frw_exe_tmp;
         end
@@ -634,7 +652,7 @@ module data_path #(
         .in0(reg_rdata1_exe),
         .in1(result_mem),
         .in2(reg_wdata_wb),
-        .out(rdata1_frw_exe_tmp)
+        .out_(rdata1_frw_exe_tmp)
     );
 
     // Forwarding mux for rd2
@@ -643,7 +661,7 @@ module data_path #(
         .in0(reg_rdata2_exe),
         .in1(result_mem),
         .in2(reg_wdata_wb),
-        .out(rdata2_frw_exe_tmp)
+        .out_(rdata2_frw_exe_tmp)
     );      
 
 
@@ -651,7 +669,7 @@ module data_path #(
     logic jalr_exe;
     assign jalr_exe = ~jal_exe & jump_exe;
     logic [31:0] jump_base_pc_exe;
-    logic [31:0] pc_jump_exe_temp;
+    logic [32:0] pc_jump_exe_temp;
     
     mux2x1 #(
         .n(32)
@@ -659,7 +677,7 @@ module data_path #(
         .sel(jalr_exe), // jalr means jump to ([rs1] + imm)
         .in0(current_pc_exe[31:0]), // all other (pc + imm)
         .in1(rdata1_frw_exe[31:0]),
-        .out(jump_base_pc_exe[31:0])
+        .out_(jump_base_pc_exe[31:0])
     );
     assign pc_jump_exe_temp = jump_base_pc_exe + imm_exe;
     assign pc_jump_exe      = {pc_jump_exe_temp[31:1], 1'b0};
@@ -675,7 +693,7 @@ module data_path #(
         .sel(auipc_exe),
         .in0(rdata1_frw_exe),
         .in1(current_pc_exe),
-        .out(alu_op1_exe)       
+        .out_(alu_op1_exe)       
     );
 
     // (exe stage)
@@ -685,7 +703,7 @@ module data_path #(
         .sel(alu_src_exe),
         .in0(rdata2_frw_exe),
         .in1(imm_exe),
-        .out(alu_op2_exe)       
+        .out_(alu_op2_exe)       
     );
 
 
@@ -699,6 +717,9 @@ module data_path #(
         .alu_result(alu_result_exe), 
         .zero(zero_exe)
     );
+
+    logic [31:0] result_exe;
+    assign result_exe = alu_result_exe;
 
 
 
@@ -716,15 +737,15 @@ module data_path #(
     );   
 
     // ============================================
-    //   Multicycle Division (out of the Pipeline)
+    //   Multicycle Division (out_ of the Pipeline)
     // ============================================
     logic flush_div;
-    assign flush_div = ~reset_n; // never flush
+    // assign flush_div = ~reset_n; // never flush
+    assign flush_div = 1'b0; // never flush as of now
     div_unit #(32) div_unit (
         .clk(clk),
         .reset_n(reset_n),
         .flush_i(flush_div),
-        .valid_i(is_div_exe & ~exe_mem_reg_clr & exe_mem_reg_en), // valid and start need to be only one signal
         .start_i(is_div_exe & ~exe_mem_reg_clr & exe_mem_reg_en),
         .funct3_i(fun3_exe),
         .rs1_i(rdata1_frw_exe),
@@ -751,7 +772,7 @@ module data_path #(
     fun3_exe,
     rdata2_frw_exe,
     imm_exe,
-    alu_result_exe,
+    result_exe,
     rdata1_frw_exe, // send the forwarded rs1 data
     csr_addr_exe,
     current_pc_exe,
@@ -837,14 +858,18 @@ module data_path #(
     logic        mem_wb_reg_en_ff;
     logic        mem_wb_reg_en_drop;
     logic        mem_wb_reg_en_rise;
-    always_ff @(posedge clk) begin 
-        mem_wb_reg_en_ff <= mem_wb_reg_en;
+    always_ff @(posedge clk, negedge reset_n) begin 
+        if(~reset_n) mem_wb_reg_en_ff <= 'b0;
+        else         mem_wb_reg_en_ff <= mem_wb_reg_en;
     end
+
     assign mem_wb_reg_en_drop =  mem_wb_reg_en_ff & ~mem_wb_reg_en;
     assign mem_wb_reg_en_rise = ~mem_wb_reg_en_ff &  mem_wb_reg_en;
 
-    always_ff @(posedge clk) begin 
-        if(mem_wb_reg_en_drop) begin 
+    always_ff @(posedge clk, negedge reset_n) begin 
+        if (~reset_n) begin 
+            mem_wdata_frw_mem_tmp_ff <= 'b0;        
+        end else if(mem_wb_reg_en_drop) begin 
             mem_wdata_frw_mem_tmp_ff <= mem_wdata_frw_mem_tmp;
         end
     end
@@ -855,7 +880,7 @@ module data_path #(
         .sel(forward_rd2_mem),
         .in0(rdata2_frw_mem),
         .in1(reg_wdata_wb),
-        .out(mem_wdata_frw_mem_tmp)
+        .out_(mem_wdata_frw_mem_tmp)
     ); 
     
        
@@ -934,7 +959,7 @@ module data_path #(
     //     .sel(pc_sel_wb),
     //     .in1(current_pc_if1),
     //     .in0(current_pc_mem),
-    //     .out(cinst_pc)
+    //     .out_(cinst_pc)
     // ); 
     always_comb begin 
         if(inst_valid_mem)                          cinst_pc = current_pc_mem;
@@ -954,13 +979,13 @@ module data_path #(
         .clk          (clk           ),
         .reset_n      (reset_n       ),
         .dont_trap    (dont_trap     ),
-        .csr_en       (core_halted ? dbg_ar_en       : csr_en_mem   ),
-        .csr_cmd      (core_halted ? 2'b00           : csr_cmd_mem  ), // don't do any thing, only read csr through debug
-        .csr_addr     (core_halted ? dbg_ar_ad[11:0] : csr_addr_mem ),
+        .core_running (core_running  ),
+        .csr_en       (core_halted ? dbg_csr_write   : csr_en_mem    ),
+        .csr_cmd      (core_halted ? 2'b01           : csr_cmd_mem   ), // read and write csr through the debug
+        .csr_addr     (core_halted ? dbg_ar_ad[11:0] : csr_addr_mem  ),
         .csr_wdata    (core_halted ? dbg_ar_do       : csr_wdata_mem ),
         .csr_rdata    (csr_rdata_mem ),
         .cinst_pc     (cinst_pc      ),
-        .ninst_pc     (32'd0         ), // as of now not using it
         .exception_i  (exception_mem ),
         .e_code       (e_code_mem    ),
         .timer_irq    (timer_irq     ),
@@ -991,7 +1016,7 @@ module data_path #(
         .in1(pc_plus_4_mem),
         .in2(imm_mem),
         .in3(csr_rdata_mem),
-        .out(result_mem)
+        .out_(result_mem)
     );
 
     assign reg_write_mem = reg_write_mem_ | is_mul_mem;
@@ -1011,12 +1036,12 @@ module data_path #(
     // control signals
     reg_write_mem,
     atomic_unit_valid_rd_mem,
-    pc_sel_mem,
     is_mul_mem,
     inst_valid_mem
 
     `ifdef tracer 
-    ,inst_mem, 
+    ,pc_sel_mem,
+    inst_mem, 
     rs1_mem, 
     rs2_mem, 
     reg_rdata1_mem,
@@ -1049,11 +1074,11 @@ module data_path #(
     // control signals
     assign reg_write_wb_            = mem_wb_bus_o.reg_write;
     assign atomic_unit_valid_rd_wb  = mem_wb_bus_o.atomic_unit_valid_rd; 
-    assign pc_sel_wb                = mem_wb_bus_o.pc_sel;
     assign is_mul_wb                = mem_wb_bus_o.is_mul;
     assign inst_valid_wb            = mem_wb_bus_o.inst_valid;
 
     `ifdef tracer 
+    assign pc_sel_wb                = mem_wb_bus_o.pc_sel;
     assign inst_wb                  = mem_wb_bus_o.inst;
     assign rs1_wb                   = mem_wb_bus_o.rs1;
     assign rs2_wb                   = mem_wb_bus_o.rs2;
@@ -1076,7 +1101,7 @@ module data_path #(
     //     .sel(atomic_unit_valid_rd_wb),
     //     .in0(non_mem_result_wb),
     //     .in1(atomic_unit_wdata_wb),
-    //     .out(reg_wdata_wb)
+    //     .out_(reg_wdata_wb)
     // );
 
     assign reg_wdata_wb = div_ready ? div_result:
@@ -1087,19 +1112,19 @@ module data_path #(
 
     `ifdef tracer
     // TRACER IP INSTANTIATION
-        logic [31:0] rvfi_insn;
-        logic [4:0]  rvfi_rs1_addr;
-        logic [4:0]  rvfi_rs2_addr;
-        logic [31:0] rvfi_rs1_rdata;
-        logic [31:0] rvfi_rs2_rdata;
-        logic [4:0]  rvfi_rd_addr;
-        logic [31:0] rvfi_rd_wdata;
-        logic [31:0] rvfi_pc_rdata;
-        logic [31:0] rvfi_pc_wdata;
-        logic [31:0] rvfi_mem_addr;
-        logic [31:0] rvfi_mem_wdata;
-        logic [31:0] rvfi_mem_rdata;
-        logic        rvfi_valid;
+        // logic [31:0] rvfi_insn;
+        // logic [4:0]  rvfi_rs1_addr;
+        // logic [4:0]  rvfi_rs2_addr;
+        // logic [31:0] rvfi_rs1_rdata;
+        // logic [31:0] rvfi_rs2_rdata;
+        // logic [4:0]  rvfi_rd_addr;
+        // logic [31:0] rvfi_rd_wdata;
+        // logic [31:0] rvfi_pc_rdata;
+        // logic [31:0] rvfi_pc_wdata;
+        // logic [31:0] rvfi_mem_addr;
+        // logic [31:0] rvfi_mem_wdata;
+        // logic [31:0] rvfi_mem_rdata;
+        // logic        rvfi_valid;
 
         logic [31:0] saved_pc;
         logic [31:0] saved_inst;

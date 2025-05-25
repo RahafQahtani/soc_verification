@@ -1,4 +1,12 @@
 import riscv_types::*;
+
+module alignment_units (
+    input logic in_, 
+    output logic out_
+);
+    assign out_ = in_;
+endmodule 
+
 module store_aligner (
     input logic [31:0] wdata,
     input store_t store_type,  // 2-bit enum type
@@ -14,8 +22,8 @@ module store_aligner (
     n_bit_dec #(
         .n(2)  // 2-bit input for 4 one-hot outputs
     ) store_type_decoder (
-        .in(store_type),
-        .out(decoded_store_type)
+        .in_(store_type),
+        .out_(decoded_store_type)
     );
 
     logic [4:0] shamt;  // Shift amount
@@ -32,7 +40,7 @@ module store_aligner (
         .sel(decoded_store_type[1:0]), // when its store word, the output will be auto-zero
         .in0(shift_amount_for_byte),
         .in1(shift_amount_for_half),
-        .out(shamt)
+        .out_(shamt)
     );
 
     assign aligned_data = wdata << shamt;
@@ -43,16 +51,16 @@ module store_aligner (
     n_bit_dec #(
         .n(2)
     ) store_byte_wsel_decoder (
-        .in(addr[1:0]),
-        .out(store_byte_wsel)
+        .in_(addr[1:0]),
+        .out_(store_byte_wsel)
     );
 
     logic [1:0] store_half_wsel_temp;
     n_bit_dec #(
         .n(1)
     ) store_half_wsel_decoder (
-        .in(addr[1]),
-        .out(store_half_wsel_temp)
+        .in_(addr[1]),
+        .out_(store_half_wsel_temp)
     );
 
     logic [3:0] store_half_wsel;
@@ -69,7 +77,7 @@ module store_aligner (
         .in0(store_byte_wsel),
         .in1(store_half_wsel),
         .in2(4'b1111),
-        .out(wsel_temp)
+        .out_(wsel_temp)
     );
 
     assign wsel = wsel_temp & {4{mem_write}};
@@ -96,7 +104,7 @@ module load_aligner (
         .in1(rdata[15:8]),
         .in2(rdata[23:16]),
         .in3(rdata[31:24]),
-        .out(selected_byte),
+        .out_(selected_byte),
         .sel(addr[1:0])
     );
 
@@ -110,7 +118,7 @@ module load_aligner (
         .sel(fun3[2]),
         .in0({24{selected_byte[7]}}),
         .in1(24'd0),
-        .out(extended_byte[31:8])   
+        .out_(extended_byte[31:8])   
     );
 
     mux2x1 #(
@@ -118,7 +126,7 @@ module load_aligner (
     ) half_word_sel_mux_byte (
         .in0(rdata[15:0]),
         .in1(rdata[31:16]),
-        .out(selected_half),
+        .out_(selected_half),
         .sel(addr[1])        
     );
 
@@ -131,7 +139,7 @@ module load_aligner (
         .sel(fun3[2]),
         .in0({16{selected_half[15]}}),
         .in1(16'd0),
-        .out(extended_half_word[31:16])   
+        .out_(extended_half_word[31:16])   
     );
 
     mux3x1 #(
@@ -141,6 +149,6 @@ module load_aligner (
         .in0(extended_byte),
         .in1(extended_half_word),
         .in2(rdata),
-        .out(aligned_data)
+        .out_(aligned_data)
     ); 
 endmodule : load_aligner

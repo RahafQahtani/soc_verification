@@ -1,6 +1,5 @@
 module alu_control (
     input logic [2:0] fun3,
-    input logic fun7_5,
     // additional signal added 
     input logic [6:0] fun7,
     input logic [1:0] alu_op,

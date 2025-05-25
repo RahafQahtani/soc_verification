@@ -1,4 +1,4 @@
-module rv32i #(
+module rv32i_top #(
     parameter DMEM_DEPTH = 1024, 
     parameter IMEM_DEPTH = 1024
 )(
@@ -21,7 +21,12 @@ module rv32i #(
 
     // stall signal from wishbone 
     input logic stall_pipl,
-    output logic if_id_reg_en,
+
+    `ifndef PD_BUILD
+        `ifndef USE_SRAM
+        output   if_id_reg_en,
+        `endif
+    `endif
 
     // timer interrupt from the clint
     input logic timer_irq,
@@ -34,8 +39,7 @@ module rv32i #(
 
     input  logic dbg_haltreq,
     input  logic dbg_resumereq,
-    input  logic dbg_ndmreset,
- 
+
     input  logic        dbg_ar_en,
     input  logic        dbg_ar_wr,
     input  logic [15:0] dbg_ar_ad,
@@ -43,6 +47,10 @@ module rv32i #(
     output logic        dbg_ar_done,
     input  logic [31:0] dbg_ar_do
 );
+
+
+    logic if_id_reg_en;
+
     
     // controller to the data path 
     logic reg_write_id; 
@@ -70,7 +78,6 @@ module rv32i #(
 
     // data path to the controller 
     logic [6:0] opcode_id;
-    logic fun7_5_exe;
     logic [2:0] fun3_exe, fun3_mem;
     logic zero_mem;
     logic [1:0] alu_op_exe;
@@ -79,10 +86,7 @@ module rv32i #(
 
     // additional signal has been added 
     logic [6:0] fun7_exe;
-    logic [4:0] func5_exe;
-    // 2 bits are being added for selection between SHA instructions 
-    logic [4:0] sha_sel_exe;
-    logic [6:0] opcode_exe;
+
 
     // data path to the controller (forwarding unit)
     wire [4:0] rs1_id;
@@ -94,6 +98,7 @@ module rv32i #(
     wire [4:0] rd_wb;
     wire reg_write_mem;
     wire reg_write_wb;
+    logic is_montgomery_id;
 
     // controller(forwarding unit) to the data path 
     wire forward_rd1_id;
@@ -127,7 +132,6 @@ module rv32i #(
     logic inst_valid_wb;
     logic [31:0] cinst_pc;
 
-    logic no_jump;
     logic dbg_ret;
 
 
@@ -137,15 +141,52 @@ module rv32i #(
     // dbg
     logic [31:0] dbg_gpr_rdata;
     logic [31:0] dbg_csr_result;
-    logic [31:0] current_pc_id;
     logic [31:0] next_pc_if1;
-    logic        prv_fetch_busy;
     logic        ebreak_inst_mem;
     logic        dont_trap;
+
+
+`ifdef tracer
+     logic [31:0] rvfi_insn;
+     logic [4:0]  rvfi_rs1_addr;
+     logic [4:0]  rvfi_rs2_addr;
+     logic [31:0] rvfi_rs1_rdata;
+     logic [31:0] rvfi_rs2_rdata;
+     logic [4:0]  rvfi_rd_addr;
+     logic [31:0] rvfi_rd_wdata;
+     logic [31:0] rvfi_pc_rdata;
+     logic [31:0] rvfi_pc_wdata;
+     logic [31:0] rvfi_mem_addr;
+     logic [31:0] rvfi_mem_wdata;
+     logic [31:0] rvfi_mem_rdata;
+     logic        rvfi_valid;
+
+    logic tracer_aggregate;
+
+     assign tracer_aggregate = ^{rvfi_insn,
+     rvfi_rs1_addr,
+     rvfi_rs2_addr,
+     rvfi_rs1_rdata,
+     rvfi_rs2_rdata,
+     rvfi_rd_addr,
+     rvfi_rd_wdata,
+     rvfi_pc_rdata,
+     rvfi_pc_wdata,
+     rvfi_mem_addr,
+     rvfi_mem_wdata,
+     rvfi_mem_rdata,
+     rvfi_valid};
+
+`endif
+
+
     data_path #(
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_DEPTH(IMEM_DEPTH)
     ) data_path_inst (
+        `ifdef tracer 
+            .external_irq(external_irq | tracer_aggregate),
+        `endif
         .*
     );
 
@@ -170,10 +211,8 @@ module rv32i #(
         .core_running_o    (core_running),
         .core_halted_o     (core_halted),
         .dont_trap         (dont_trap),
-        .current_pc_id     (current_pc_id),
         .cinst_pc          (cinst_pc),
         .next_pc_if1       (next_pc_if1),
-        .fetch_busy_i      (prv_fetch_busy),
         .dbg_ret           (dbg_ret),
         .trap              (trap),
         .trap_ret          (trap_ret),

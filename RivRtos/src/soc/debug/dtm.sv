@@ -180,17 +180,21 @@ end
 assign bypassed_tdo = bypass_reg;
 
 //tdo out logic
-always_ff@(negedge tck_i)
-begin : tdo_mux
-  if(shift_ir)
-    tdo_o <= instruction_tdo;
-  else
-    case(instruction_reg_q)
-      IDCODE:  tdo_o <= idcode_tdo;
-      DTMCS:   tdo_o <= dtmcs_tdo;
-      DMI:     tdo_o <= dmi_tdo;
-      default: tdo_o <= bypassed_tdo;
-    endcase
-end : tdo_mux
+always_ff@(negedge tck_i, negedge trstn_i) 
+begin 
+  if(~trstn_i) tdo_o <= 'b0;
+  else begin 
+    if(shift_ir)
+      tdo_o <= instruction_tdo;
+    else
+      case(instruction_reg_q)
+        IDCODE:  tdo_o <= idcode_tdo;
+        DTMCS:   tdo_o <= dtmcs_tdo;
+        DMI:     tdo_o <= dmi_tdo;
+        default: tdo_o <= bypassed_tdo;
+      endcase
+  end
+end
+
 
 endmodule

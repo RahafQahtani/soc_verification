@@ -93,7 +93,6 @@ module clint_wb #(
             if (sel_i[2]) mtime_hi[23:16] <= dat_i[23:16];
             if (sel_i[3]) mtime_hi[31:24] <= dat_i[31:24];
           end
-          default: ; // Do nothing for unmapped addresses.
         endcase
       end else begin 
 

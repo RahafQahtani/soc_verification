@@ -73,14 +73,15 @@ class soc_scb extends uvm_scoreboard;
      
      
      if(result.peripheral_name == "SPI1" ||result.peripheral_name == "SPI2" ) begin
-     if(t.addr ==2) begin
+      if(t.addr != 32'h2000010c) begin
+     if(t.addr[4:2] ==2) begin
     spi_ref_model.tx_queue.push_back(t.din);
     spi_ref_model.rx_queue.push_back(t.dout);
      end
     spi_ref_model.wb_queue.push_back(t);
      compare_spi_transactions();
      end 
-    
+     end 
   endfunction
 
 
@@ -92,9 +93,11 @@ function void compare_spi_transactions();
   wb_transaction ref_pkt = spi_ref_model.wb_queue.pop_front();
    if (ref_pkt.op_type == wb_read) begin
   // Only expect SPI data for SPDR register 
+  `uvm_info("SCO", $sformatf("SPSR before compare: %h", spi_ref_model.get_SPSR()), UVM_LOW)
+
     case (ref_pkt.addr[4:2])
       3'b0: compare_reg("SPCR", ref_pkt.dout, spi_ref_model.get_SPCR());
-      3'b001: compare_reg("SPSR", ref_pkt.dout, spi_ref_model.get_SPSR());
+      3'b001: compare_reg("SPSR", ref_pkt.dout, spi_ref_model.SPSR);
        3'b010: begin // SPDR
             if (spi_ref_model.spi_queue.size() > 0 &&
             spi_ref_model.rx_queue.size() > 0 &&
@@ -130,6 +133,7 @@ function void compare_reg(string name, bit [31:0] actual, bit [31:0] expected);
     void'(spi_ref_model.rx_queue.pop_front());
       void'(spi_ref_model.tx_queue.pop_front());
       result.sub_sequence_name = $sformatf("Compare %s", name);
+            
     result.result_data = $sformatf("Expected: %0h, Actual: %0h", expected, actual);
     result.result_status = (actual == expected) ? "PASSED" : "FAILED";
     results.push_back(result);

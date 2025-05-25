@@ -34,7 +34,7 @@ module plic_core #(
   logic [SOURCE_ID_WIDTH-1:0] max_id;
 
 
-    logic [SOURCE_ID_WIDTH-1:0] claim_id ;
+    logic [SOURCE_ID_WIDTH-1:0] claim_id, complete_id;
     logic claim_sig;
     logic complete_sig;
 
@@ -91,7 +91,7 @@ module plic_core #(
         if(~rst_n) begin 
             en_reg[NUM_SOURCES_P:1] <= 'b0;
         end else if (wb_write_i & wb_addr_i[23:2] == 22'h00800) begin 
-            if (wb_sel_i[0]) en_reg [6 : 1] <= wb_wdata_i[6 : 1];  
+            if (wb_sel_i[0]) en_reg [NUM_SOURCES_P : 1] <= wb_wdata_i[NUM_SOURCES_P : 1];  
         end
     end
 
@@ -163,10 +163,10 @@ module plic_core #(
     assign max_priority  = gateway_priority[NUM_SOURCES_P];
     assign max_id        = gateway_id[NUM_SOURCES_P];
     assign claim_id      = max_id; // no need to check for claim here, if core is not claiming then these are don't care wires
-    assign complete_id   = complete_sig ? wb_wdata_i : 'b0;
+    assign complete_id   = complete_sig ? wb_wdata_i[SOURCE_ID_WIDTH-1:0] : 'b0;
     assign complete_id_o = complete_id;
 
-    assign irq_o         = max_priority > thr_reg;
+    assign irq_o         = {{(THRESHOLD_WIDTH - PRIORITY_WIDTH){1'b0}},max_priority} > thr_reg;
     
 
 
@@ -183,19 +183,19 @@ module plic_core #(
         // — Priority[1..31]: offsets 0x00,0x04,…,0x7C  (word addrs 0–30)
         if (wb_addr_i[23:2] < 22'd32) begin
             // source id = wb_addr_i[4:2] + 1
-            wb_rdata_o = priority_o[ wb_addr_i[4:2] + 1 ];
+            wb_rdata_o = {{(32-PRIORITY_WIDTH){1'b0}},priority_o[ wb_addr_i[4:2]]}; // TODO remove + 1
         end
 
         // — Pending bits @ 0x1000 → word addr 0x400
         else if (wb_addr_i[23:2] == 22'h00400) begin
             // ip_reg[0]=0, ip_reg[1..31] map to bits [1..31]
-            wb_rdata_o = ip_reg;
+            wb_rdata_o = {{(32-NUM_SOURCES_P){1'b0}},ip_reg};
         end
 
         // — Enable bits @ 0x2000 → word addr 0x800
         else if (wb_addr_i[23:2] == 22'h00800) begin
             // en_reg[0][1..31] → bits [1..31]
-            wb_rdata_o = en_reg ;
+            wb_rdata_o = {{(32-NUM_SOURCES_P){1'b0}},en_reg};
         end
 
         // — Threshold @ 0x200000 → word addr 0x080000
@@ -205,7 +205,7 @@ module plic_core #(
 
         // — Claim/Complete @ 0x200004 → word addr 0x080001
         else if (wb_addr_i[23:2] == 22'h080001) begin
-            wb_rdata_o = claim_id;
+            wb_rdata_o = {{(32-SOURCE_ID_WIDTH){1'b0}},claim_id};
         end
 
         end

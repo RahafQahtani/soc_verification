@@ -14,7 +14,7 @@ begin
 				ins_32[11:7] = {2'b01,ins_16[4:2]}; //rd
 				ins_32[14:12] = 3'b000; //funct3
 				ins_32[19:15]  = 5'h2; //rs
-				ins_32[31:20] = {ins_16[10:7],ins_16[12:11],ins_16[5],ins_16[6],2'b00}; //imm[11:0]
+				ins_32[31:20] = {2'h0,ins_16[10:7],ins_16[12:11],ins_16[5],ins_16[6],2'b00}; // TODO: modified to remove sg error
 				end	
 	5'b010_00: begin //C.lw checked
 				ins_32[6:0] = 7'b0000011; 			//opcode
@@ -125,7 +125,7 @@ begin
 											ins_32[14:12] = 3'b100; //funct3
 											ins_32[19:15]  = {2'b01,ins_16[9:7]}; //rs1
 											ins_32[24:20]  = {2'b01,ins_16[4:2]}; //rs2
-											ins_32[31:24] = 7'h00;//imm[11:0]
+											ins_32[31:25] = 7'h00;//imm[11:0]
 										 end
 								2'b10: begin //C.OR checked
 										 	ins_32[6:0] = 7'b0110011; //opcode
@@ -133,7 +133,7 @@ begin
 											ins_32[14:12] = 3'b110 ; //funct3
 											ins_32[19:15]  = {2'b01,ins_16[9:7]}; //rs1
 											ins_32[24:20]  = {2'b01,ins_16[4:2]}; //rs2
-											ins_32[31:24] = 7'h00;//imm[11:0]
+											ins_32[31:25] = 7'h00;//imm[11:0]
 										 end
 								2'b11: begin //C.AND checked
 										 	ins_32[6:0] = 7'b0110011; //opcode
@@ -141,7 +141,7 @@ begin
 											ins_32[14:12] = 3'b111 ; //funct3
 											ins_32[19:15]  = {2'b01,ins_16[9:7]}; //rs1
 											ins_32[24:20]  = {2'b01,ins_16[4:2]}; //rs2
-											ins_32[31:24] = 7'h00;//imm[11:0]
+											ins_32[31:25] = 7'h00;//imm[11:0]
 										 end
 								endcase
 							 end

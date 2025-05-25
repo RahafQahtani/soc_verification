@@ -5,7 +5,7 @@ import debug_pkg::*;
 module debug_top
 (
 
-`ifndef VIVADO_BUILD
+`ifndef USE_FPGA_JTAG
 
   input         tms_i,
   input         tck_i,
@@ -33,7 +33,7 @@ module debug_top
 
   output onebit_sig_e am_en_o,
   output onebit_sig_e am_wr_o,
-  output [3:0]  am_st_o,
+  output [2:0]  am_st_o,
   output [31:0] am_ad_o,
   input [31:0]  am_di_i,
   output [31:0] am_do_o,
@@ -48,7 +48,7 @@ dm_addresses_e dmi_ad;
 logic [31:0] dmi_di;
 logic [31:0] dmi_do;
 
-`ifdef VIVADO_BUILD
+`ifdef USE_FPGA_JTAG
 
 
   logic dmi_reg_wr_en;

@@ -3,7 +3,7 @@ class wb_x_spi_module extends uvm_component;
 
   // Registers
   logic [7:0] SPCR = 8'h10;  // Control Register
-  logic [7:0] SPSR = 8'h05;  // Status Register
+  logic [7:0] SPSR ;  // Status Register
   logic [7:0] SPDR = 8'h00;  // Data Register
   logic [7:0] SPER = 8'h00;  // Extensions Register
   logic [7:0] CSREG = 8'h00; // Chip Select Register
@@ -31,7 +31,8 @@ class wb_x_spi_module extends uvm_component;
   function void write_wb(wb_transaction t);
     wb_transaction s;
     s = wb_transaction::type_id::create("s", this);
-
+`uvm_info("Spi ref", $sformatf("Received REF Transaction: %s", t.sprint()), UVM_MEDIUM)
+    
     s.addr = t.addr;
     s.op_type = t.op_type;
     s.valid_sb = t.valid_sb;
@@ -72,7 +73,7 @@ class wb_x_spi_module extends uvm_component;
                   SPSR[7] = 1'b1;
                     if (SPSR[3]) SPSR[6] = 1'b1; //WCOL is stressed if Write fifo full 
                    tx_queue.push_back(t.din);
-                
+               
               end
         32'h3: SPER = t.din;
         32'h4: CSREG = t.din;
@@ -85,7 +86,7 @@ class wb_x_spi_module extends uvm_component;
         32'h0: s.dout = SPCR;
         32'h1: s.dout = SPSR;
         32'h2: begin s.dout = SPDR;
-        SPSR[7] = 1'b0; 
+        // SPSR[7] = 1'b0; 
         end  
         32'h3: s.dout = SPER;
         32'h4: s.dout = CSREG;
@@ -102,7 +103,7 @@ class wb_x_spi_module extends uvm_component;
 
    
    task update_status_register(input logic reset);
-  if (reset == 0) begin
+   if (reset == 0) begin
     // Normal update mode
     SPSR[7] = SPSR[7]; // preserve IF if already set
     SPSR[6] = 0; // WCOL
@@ -110,7 +111,12 @@ class wb_x_spi_module extends uvm_component;
     SPSR[2] = (tx_queue.size() == 0); // WFEMPTY
     SPSR[1] = (rx_queue.size() >= 4); // RFFULL
     SPSR[0] = (rx_queue.size() == 0); // RFEMPTY
+    if( SPSR[3]) SPSR[0]=0;
   end
+   `uvm_info("SPSR_MON", $sformatf("SPSR Updated: %02h | IF=%0b WCOL=%0b WFFULL=%0b WFEMPTY=%0b RFFULL=%0b RFEMPTY=%0b",
+                                SPSR,
+                                SPSR[7], SPSR[6], SPSR[3], SPSR[2], SPSR[1], SPSR[0]), UVM_MEDIUM)
+
 endtask
 
 
@@ -120,13 +126,17 @@ endtask
   endfunction
 
   function logic [7:0] get_SPSR();
-    return SPSR;
+
+    `uvm_info("SPSR_MON_1", $sformatf("SPSR Updated: %0h ",
+                                SPSR), UVM_LOW)
+ return SPSR;
   endfunction
 
   function logic [7:0] get_SPER();
     return SPER;
   endfunction
   function logic [7:0] get_SPDR();
+  
     return SPDR;
   endfunction
 

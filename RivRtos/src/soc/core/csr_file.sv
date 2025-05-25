@@ -20,7 +20,6 @@ module csr_file (
     output logic [31:0]  csr_rdata,      // CSR read data output
 
     input  logic [31:0]  cinst_pc,      // Current instruction PC
-    input  logic [31:0]  ninst_pc,      // Next instruction PC
     input  logic         exception_i,   // Synchronous exception detected
     input  logic [5:0]   e_code,        // Encoded exception cause
 
@@ -35,7 +34,8 @@ module csr_file (
     output logic [5:0]   trap_cause,
     input  logic         trap_ret,
 
-    input logic dont_trap
+    input logic dont_trap,
+    input logic core_running
 );
 
 
@@ -189,8 +189,9 @@ module csr_file (
     // end
     assign mip_reg[7] = timer_irq;
     assign mip_reg[11] = external_irq;
-    assign mip_reg[6:0] = 0;
-    assign mip_reg[31:12] = 0;
+    assign mip_reg[6:0] = 'b0;
+    assign mip_reg[10:8] = 'b0;
+    assign mip_reg[31:12] = 'b0;
 
 
 
@@ -210,7 +211,7 @@ module csr_file (
                 else if (csr_cmd == 2'b11)
                     mcause_reg <= mcause_reg & ~csr_wdata;
             end else begin 
-                if(trap)   mcause_reg <= (~exception_i << 31 | (trap_cause));
+                if(trap)   mcause_reg <= (~exception_i << 31 | {26'd0, trap_cause});
             end 
         end
     end
@@ -255,7 +256,7 @@ module csr_file (
     assign meie = mie_reg[11];
 
 
-    assign trap        = ((mei & ((mtie & mtip) | (meie & meip) )) | exception_i ) & ~dont_trap;
+    assign trap        = ((mei & ((mtie & mtip) | (meie & meip) )) | exception_i ) & ~dont_trap & core_running;
     assign trap_cause  = (exception_i) ? e_code : 
                          (meip) ? 6'd11:
                          6'd7; // for the timer interrupt 
@@ -280,7 +281,7 @@ module csr_file (
             ADDR_MEPC:     csr_rdata = mepc_reg;
             ADDR_MCAUSE:   csr_rdata = mcause_reg;
             ADDR_MTVAL:    csr_rdata = mtval_reg;
-            ADDR_MIP:      csr_rdata = mip_reg; // plus any hardware-combined bits
+            ADDR_MIP:      csr_rdata = mip_reg; // variable read but not set? 
             default:       csr_rdata = 32'h0;
         endcase
     end

@@ -1,5 +1,5 @@
 module imm_gen (
-    input logic [31:0] inst,
+    input logic [31:7] inst,
     input logic j_type, 
     input logic b_type, 
     input logic s_type, 
@@ -23,7 +23,7 @@ module imm_gen (
         .sel({s_type, i_type}),
         .in1(inst[7]),
         .in0(inst[20]),
-        .out(imm_temp[0])
+        .out_(imm_temp[0])
     );
 
     // imm_temp[4:1]
@@ -34,7 +34,7 @@ module imm_gen (
         .sel({(j_type | i_type),(b_type | s_type)}),
         .in1(inst[24:21]),
         .in0(inst[11:8]),
-        .out(temp_imm[4:1])
+        .out_(temp_imm[4:1])
     );
     assign imm_temp[4:1] = temp_imm & ~({4{u_type}});
 
@@ -54,7 +54,7 @@ module imm_gen (
         .sel((u_type | j_type)),
         .in0({8{imm_temp[31]}}),
         .in1(inst[19:12]),
-        .out(imm_temp[19:12])
+        .out_(imm_temp[19:12])
     );
 
 
@@ -65,7 +65,7 @@ module imm_gen (
         .sel(u_type),
         .in0({11{imm_temp[31]}}),
         .in1(inst[30:20]),
-        .out(imm_temp[30:20])
+        .out_(imm_temp[30:20])
     );
 
 
@@ -77,7 +77,7 @@ module imm_gen (
         .in2(imm_temp[31]),
         .in1(inst[7]),
         .in0(inst[20]),
-        .out(imm_temp[11])
+        .out_(imm_temp[11])
     );
 
     assign imm = csr_inst ? {27'd0, inst[19:15]} : imm_temp;

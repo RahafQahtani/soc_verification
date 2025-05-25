@@ -6,7 +6,7 @@ module data_mem #(
   input  wire        rst_i,         // reset (synchronous active high)
   input  wire        cyc_i,         // cycle
   input  wire        stb_i,         // strobe
-  input  wire [31:0] adr_i,         // address
+  input  wire [$clog2(DEPTH)+1:2] adr_i,         // address
   input  wire        we_i,          // write enable
   input  wire [3:0]  sel_i,
   input  wire [31:0] dat_i,         // data input

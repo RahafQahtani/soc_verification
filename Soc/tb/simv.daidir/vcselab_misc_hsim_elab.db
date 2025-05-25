@@ -1,6 +1,6 @@
 psSimBaseName                      	simv
 psLogFileName                      	NULL
-psDaiDir                           	/home/Rahaf_Alqahtani/VD_labs/core_ver_git/Soc_verification_1/Soc/tb/simv.daidir
+psDaiDir                           	/home/Rahaf_Alqahtani/VD_labs/core_ver_git/Soc_verification_1 copy/Soc/tb/simv.daidir
 destPath                           	csrc/
 fSharedMasterElab                  	0
 fHsimPCSharedLibSpecified          	0

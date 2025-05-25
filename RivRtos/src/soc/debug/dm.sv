@@ -31,7 +31,7 @@ module dm(
 
   output onebit_sig_e am_en_o,
   output onebit_sig_e am_wr_o,
-  output logic[3:0] am_st_o,
+  output logic[2:0] am_st_o,
   output logic[31:0] am_ad_o,
   input [31:0]  am_di_i,
   output logic[31:0] am_do_o,
@@ -60,25 +60,37 @@ enum logic [1:0] {IDLE, DECODE, POST} pstate, nstate;
 logic autoexeccmd;
 
 
-always_ff@(posedge clk_i)
+always_ff@(posedge clk_i, posedge rst_i)
 begin : dmstatus_reg
-  //ndmreset logic and clear
-  if(ndmreset_o)
-  begin
-    dmstatus[19] <= 1'b1;
-    dmstatus[18] <= 1'b1;
+
+  if(rst_i) begin 
+    dmstatus[19] <= 'b0;
+    dmstatus[18] <= 'b0;
+    dmstatus[17] <= 'b0;
+    dmstatus[16] <= 'b0;
+    dmstatus[11] <= 'b0;
+    dmstatus[10] <= 'b0;
+    dmstatus[9]  <= 'b0;
+    dmstatus[8]  <= 'b0;
+  end else begin 
+    //ndmreset logic and clear
+    if(ndmreset_o)
+    begin
+      dmstatus[19] <= 1'b1;
+      dmstatus[18] <= 1'b1;
+    end
+    else if(ackhavereset)
+    begin
+      dmstatus[19] <= 1'b0;
+      dmstatus[18] <= 1'b0;
+    end
+      dmstatus[17] <= resumeack_i;
+      dmstatus[16] <= resumeack_i;
+      dmstatus[11] <= running_i;
+      dmstatus[10] <= running_i;
+      dmstatus[9]  <= halted_i;
+      dmstatus[8]  <= halted_i;
   end
-  else if(ackhavereset)
-  begin
-    dmstatus[19] <= 1'b0;
-    dmstatus[18] <= 1'b0;
-  end
-  dmstatus[17] <= resumeack_i;
-  dmstatus[16] <= resumeack_i;
-  dmstatus[11] <= running_i;
-  dmstatus[10] <= running_i;
-  dmstatus[9] <= halted_i;
-  dmstatus[8] <= halted_i;
 end : dmstatus_reg
 
 
@@ -175,7 +187,7 @@ begin
             ar_do_o = 0;
             am_en_o = FALSE;
             am_wr_o = FALSE;
-            am_st_o = 4'd0;
+            am_st_o = 'd0;
             am_ad_o = 0;
             am_do_o = 0;
             busy = 1'b0;
@@ -200,7 +212,7 @@ begin
             ar_do_o = 0;
             am_en_o = FALSE;
             am_wr_o = FALSE;
-            am_st_o = 4'd0;
+            am_st_o = 'd0;
             am_ad_o = 0;
             am_do_o = 0;
             busy = 1'b0;
@@ -214,7 +226,7 @@ begin
               ar_do_o = 0;
               am_en_o = FALSE;
               am_wr_o = FALSE;
-              am_st_o = 4'd0;
+              am_st_o = 'd0;
               am_ad_o = 0;
               am_do_o = 0;
               busy = 1'b0;
@@ -243,10 +255,12 @@ begin : data1_reg
   else if(!abstractcs[12] && dmi_wr_i && dmi_ad_i == DATA1)
     data1 <= dmi_di_i;
   else if(pstate == POST && aapostincrement && cmdtype == 8'd2)
+  begin 
     if(aasize == 3'd1)
       data1 <= data1 + 2;
     else if(aasize == 3'd2)
       data1 <= data1 + 4;
+  end
 end : data1_reg
 
 //abstarctauto
@@ -255,7 +269,7 @@ begin : abstarctauto_reg
   if(rst_i)
     abstractauto[1:0] <= 0;
   else if(!abstractcs[12] && dmi_wr_i && dmi_ad_i == ABSTRACTAUTO)
-    abstractauto[1:0] <= dmi_di_i;
+    abstractauto[1:0] <= dmi_di_i[1:0];
 end : abstarctauto_reg
 
 assign autoexeccmd = (dmi_wr_i || dmi_rd_i) &&  ((abstractauto[0] && dmi_ad_i == DATA0) ||

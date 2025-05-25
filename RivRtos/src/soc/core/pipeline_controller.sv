@@ -31,7 +31,7 @@ module pipeline_controller (
 
     assign if_id_reg_en   =  core_running & ~( div_busy   | stall_pipl | (load_hazard | mul_hazard) | atomic_unit_hazard | atomic_unit_stall); // TODO. (core_halted) no need to disable enable when clearing
     assign id_exe_reg_en  =  core_running & ~( div_busy   | stall_pipl |                              atomic_unit_hazard | atomic_unit_stall);
-    assign exe_mem_reg_en =  core_running & ~( div_busy   | stall_pipl |                                                   atomic_unit_stall);
+    assign exe_mem_reg_en =  core_running & ~( div_busy   | stall_pipl |                                                   atomic_unit_stall | atomic_unit_hazard);
     assign mem_wb_reg_en  =  core_running & ~(              stall_pipl                                                                      );
     assign pc_reg_en      =  core_running & ~( div_busy   | stall_pipl | (load_hazard | mul_hazard) | atomic_unit_hazard | atomic_unit_stall);
 

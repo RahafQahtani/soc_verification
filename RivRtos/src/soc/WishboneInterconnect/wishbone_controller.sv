@@ -1,7 +1,5 @@
 import riscv_types::*;
-module wishbone_controller (
-    input  wire        clk,           // Clock signal
-    input  wire        rst,           // Reset signal
+module wishbone_controller (  // combinational controller, not state based
 
     // Processor interface signals
     input  wire [31:0] proc_addr,     // Processor address
@@ -9,7 +7,7 @@ module wishbone_controller (
     input  wire        proc_write,    // Processor write enable
     input  wire        proc_read,    // Processor write enable
     input  wire [2:0]  proc_op,       // Processor operation
-    output reg  [31:0] proc_rdata,    // Processor read data
+    output wire  [31:0] proc_rdata,    // Processor read data
     output logic       proc_ack,
     output logic       proc_stall_pipl,
 
@@ -17,7 +15,7 @@ module wishbone_controller (
     input logic   core_halted,
     input logic   dbg_am_en_i,
     input logic   dbg_am_wr_i,
-    input [3:0]   dbg_am_st_i,
+    input [2:0]   dbg_am_st_i,
     input [31:0]  dbg_am_ad_i,
     output [31:0] dbg_am_di_o,
     input [31:0]  dbg_am_do_i,
@@ -25,15 +23,15 @@ module wishbone_controller (
 
 
     // Wishbone bus signals
-    output reg  [31:0] wb_adr_o,      // Wishbone address output
-    output reg  [31:0] wb_dat_o,      // Wishbone data output
-    output reg  [3:0]  wb_sel_o,      // Wishbone byte enable
-    output reg         wb_we_o,       // Wishbone write enable
-    output reg         wb_cyc_o,      // Wishbone cycle valid
-    output reg         wb_stb_o,      // Wishbone strobe
-    input  wire [31:0] wb_dat_i,      // Wishbone data input
-    input  wire        wb_ack_i,      // Wishbone acknowledge
-    input  wire        wb_err_i
+    output wire  [31:0] wb_adr_o,      // Wishbone address output
+    output wire  [31:0] wb_dat_o,      // Wishbone data output
+    output wire  [3:0]  wb_sel_o,      // Wishbone byte enable
+    output reg          wb_we_o,       // Wishbone write enable
+    output reg          wb_cyc_o,      // Wishbone cycle valid
+    output reg          wb_stb_o,      // Wishbone strobe
+    input  wire  [31:0] wb_dat_i,      // Wishbone data input
+    input  wire         wb_ack_i,      // Wishbone acknowledge
+    input  wire         wb_err_i
 );
 
     // ============================================
@@ -82,15 +80,13 @@ module wishbone_controller (
     //            Debug Unit Wishbone Access
     // ============================================
 
-    reg  [31:0] dbg_wb_adr_o;  
-    reg  [31:0] dbg_wb_dat_o;    
+    reg  [31:0] dbg_wb_adr_o;    
     reg         dbg_wb_we_o;    
     reg         dbg_wb_cyc_o;   
     reg         dbg_wb_stb_o;  
 
     // to the interconnect
     assign dbg_wb_adr_o = dbg_am_ad_i;
-    assign dbg_wb_dat_o = dbg_am_do_i;
 
 
 

@@ -8,14 +8,18 @@ module iadu (
 
     output logic [31:0] o_inst,
     output logic        o_is_comp,
-    output logic        o_is_illegal,
     output logic [31:0] o_pc_corrected,
     output logic        o_hold,
     output logic        o_increment_pc_by_2,
     output logic        o_fetch_busy
 );
 
+
+
     parameter NOP = 32'h00000013;
+
+
+    logic o_is_illegal;
     logic pc_misaligned;
     logic is_comp, next_is_comp;
     logic its_a_jump;

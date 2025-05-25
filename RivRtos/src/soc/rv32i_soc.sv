@@ -1,37 +1,37 @@
 `ifndef PD_BUILD
     `ifdef VCS_SIM
-        `include "pads/tpz018nv_270a/tpz018nv.v"
-        `include "soc/sram/tsmc_32k_rtl.v"
-        `include "soc/sram/tsmc_8k_rtl.v"
-        `include "soc/rom/tsmc_rom_1k_rtl.v"
+        `include "../../RivRtos/src/pads/tpz018nv_270a/tpz018nv.v"
+        `include "../../RivRtos/src/soc/sram/tsmc_32k_rtl.v"
+        `include "../../RivRtos/src/soc/sram/tsmc_8k_rtl.v"
+        `include "../../RivRtos/src/soc/rom/tsmc_rom_1k_rtl.v"
     `endif
 `elsif SG
-        `include "pads/tpz018nv_270a/tpz018nv.v"
-        `include "soc/sram/tsmc_32k_rtl.v"
-        `include "soc/sram/tsmc_8k_rtl.v"
-        `include "soc/rom/tsmc_rom_1k_rtl.v"
+        `include "../../RivRtos/src/pads/tpz018nv_270a/tpz018nv.v"
+        `include "../../RivRtos/src/soc/sram/tsmc_32k_rtl.v"
+        `include "../../RivRtos/src/soc/sram/tsmc_8k_rtl.v"
+        `include "../../RivRtos/src/soc/rom/tsmc_rom_1k_rtl.v"
 `endif
 
 // Added a comment
 module rv32i_soc #(
-    parameter DMEM_DEPTH = 128,
-    parameter IMEM_DEPTH = 128,
-    parameter NO_OF_GPIO_PINS = 24,
-    parameter NO_OF_SHARED_PINS = 13
+    parameter DMEM_DEPTH = 8*256,
+    parameter IMEM_DEPTH = 32*256,
+    parameter NO_OF_GPIO_PINS = 32,
+    parameter NO_OF_SHARED_PINS = 15
 ) (
     input logic clk, 
     input logic reset_n,
         
     // gpio signals
-    input  logic [23:0] i_gpio, 
-    output logic [23:0] o_gpio,
-    output logic [23:0] en_gpio,
+    input  logic [NO_OF_GPIO_PINS - 1:0] i_gpio, 
+    output logic [NO_OF_GPIO_PINS - 1:0] o_gpio,
+    output logic [NO_OF_GPIO_PINS - 1:0] en_gpio,
     
     // uart signal
-    output logic        o_uart_tx,
-    input logic         i_uart_rx
+    output logic        o_uart1_tx,
+    input logic         i_uart1_rx
     
-`ifndef VIVADO_BUILD
+`ifndef USE_FPGA_JTAG
     , 
     input logic tck_i,
     input logic tdi_i,
@@ -39,6 +39,7 @@ module rv32i_soc #(
     output logic tdo_o
 `endif
 );
+
 
     // spi signals to the spi-flash
     logic       o_flash_sclk;     // serial clock output
@@ -64,6 +65,10 @@ module rv32i_soc #(
     //  ptc signals 
     logic pwm_pad_o;
 
+    // uart 2 signals 
+    logic        o_uart2_tx;
+    logic        i_uart2_rx;
+
     logic [NO_OF_GPIO_PINS - 1:0] i_gpio_;
     logic [NO_OF_GPIO_PINS - 1:0] o_gpio_;
     logic [NO_OF_GPIO_PINS - 1:0] en_gpio_;
@@ -73,9 +78,11 @@ module rv32i_soc #(
     // ============================================   
        
     logic [NO_OF_SHARED_PINS- 1:0] io_sel; 
+    logic pwm_padoen_o;
 
     io_mux #(
-        .NO_OF_SHARED_PINS(13)
+        .NO_OF_SHARED_PINS  (NO_OF_SHARED_PINS),
+        .NO_OF_GPIO_PINS    (NO_OF_GPIO_PINS)
     ) io_mux_instance (
         // Control
         .io_sel           (io_sel),
@@ -102,6 +109,11 @@ module rv32i_soc #(
 
         // PTC
         .pwm_pad_o        (pwm_pad_o),
+        .pwm_padoen_o     (pwm_padoen_o),
+
+        // UART 2
+        .o_uart2_tx       (o_uart2_tx),
+        .i_uart2_rx       (i_uart2_rx),
 
         // GPIO core <-> pad mux
         .i_gpio_          (i_gpio_),
@@ -134,7 +146,7 @@ module rv32i_soc #(
 
     logic        dbg_am_en;
     logic        dbg_am_wr;
-    logic [3:0]  dbg_am_st;
+    logic [2:0]  dbg_am_st;
     logic [31:0] dbg_am_ad;
     logic [31:0] dbg_am_di;
     logic [31:0] dbg_am_do;
@@ -153,13 +165,19 @@ module rv32i_soc #(
     logic stall_pipl;
     logic [31:0] current_pc, inst;
     logic sel_boot_rom, sel_boot_rom_ff;
-    logic if_id_reg_en;
+
+`ifndef PD_BUILD
+    `ifndef USE_SRAM
+        logic if_id_reg_en;
+    `endif
+`endif
     logic timer_irq;
     logic ptc_irq;
     logic spi_flash_irq;
     logic spi2_irq;
     logic i2c_irq;
-    logic uart_irq;
+    logic uart1_irq;
+    logic uart2_irq;
     logic gpio_irq;
     logic external_irq; // to be assigned a value zero until PLIC is added
 
@@ -168,7 +186,7 @@ module rv32i_soc #(
     // ============================================
     //              RISC-V Processor Core
     // ============================================ 
-    rv32i #(
+    rv32i_top #(
         .DMEM_DEPTH(DMEM_DEPTH),
         .IMEM_DEPTH(IMEM_DEPTH)
     ) rv32i_core_inst (
@@ -223,16 +241,29 @@ module rv32i_soc #(
     wire        wb_s2m_spi_rty;
 
     // UART
-    wire [31:0] wb_m2s_uart_adr;
-    wire [31:0] wb_m2s_uart_dat;
-    wire  [3:0] wb_m2s_uart_sel;
-    wire        wb_m2s_uart_we;
-    wire        wb_m2s_uart_cyc;
-    wire        wb_m2s_uart_stb;
-    wire [31:0] wb_s2m_uart_dat;
-    wire        wb_s2m_uart_ack;
-    wire        wb_s2m_uart_err;
-    wire        wb_s2m_uart_rty;
+    wire [31:0] wb_m2s_uart1_adr;
+    wire [31:0] wb_m2s_uart1_dat;
+    wire  [3:0] wb_m2s_uart1_sel;
+    wire        wb_m2s_uart1_we;
+    wire        wb_m2s_uart1_cyc;
+    wire        wb_m2s_uart1_stb;
+    wire [31:0] wb_s2m_uart1_dat;
+    wire        wb_s2m_uart1_ack;
+    wire        wb_s2m_uart1_err;
+    wire        wb_s2m_uart1_rty;
+
+    // UART
+    wire [31:0] wb_m2s_uart2_adr;
+    wire [31:0] wb_m2s_uart2_dat;
+    wire  [3:0] wb_m2s_uart2_sel;
+    wire        wb_m2s_uart2_we;
+    wire        wb_m2s_uart2_cyc;
+    wire        wb_m2s_uart2_stb;
+    wire [31:0] wb_s2m_uart2_dat;
+    wire        wb_s2m_uart2_ack;
+    wire        wb_s2m_uart2_err;
+    wire        wb_s2m_uart2_rty;
+
 
     // GPIO
     wire [31:0] wb_m2s_gpio_adr;
@@ -325,9 +356,7 @@ module rv32i_soc #(
 
 
     wishbone_controller wishbone_master (
-        .clk        (clk),
-        .rst        (~reset_n | dbg_ndmreset),
-
+   
         .proc_addr  (mem_addr_mem),
         .proc_wdata (mem_wdata_mem),
         .proc_write (mem_write_mem),
@@ -420,16 +449,27 @@ module rv32i_soc #(
     .wb_imem_err_i       (wb_s2m_imem_err),
     .wb_imem_rty_i       (wb_s2m_imem_rty),
 
-    .wb_uart_adr_o      (wb_m2s_uart_adr),
-    .wb_uart_dat_o      (wb_m2s_uart_dat),
-    .wb_uart_sel_o      (wb_m2s_uart_sel),
-    .wb_uart_we_o       (wb_m2s_uart_we),
-    .wb_uart_cyc_o      (wb_m2s_uart_cyc),
-    .wb_uart_stb_o      (wb_m2s_uart_stb),
-    .wb_uart_dat_i      (wb_s2m_uart_dat),
-    .wb_uart_ack_i      (wb_s2m_uart_ack),
-    .wb_uart_err_i      (wb_s2m_uart_err),
-    .wb_uart_rty_i      (wb_s2m_uart_rty),
+    .wb_uart1_adr_o      (wb_m2s_uart1_adr),
+    .wb_uart1_dat_o      (wb_m2s_uart1_dat),
+    .wb_uart1_sel_o      (wb_m2s_uart1_sel),
+    .wb_uart1_we_o       (wb_m2s_uart1_we),
+    .wb_uart1_cyc_o      (wb_m2s_uart1_cyc),
+    .wb_uart1_stb_o      (wb_m2s_uart1_stb),
+    .wb_uart1_dat_i      (wb_s2m_uart1_dat),
+    .wb_uart1_ack_i      (wb_s2m_uart1_ack),
+    .wb_uart1_err_i      (wb_s2m_uart1_err),
+    .wb_uart1_rty_i      (wb_s2m_uart1_rty),
+
+    .wb_uart2_adr_o      (wb_m2s_uart2_adr),
+    .wb_uart2_dat_o      (wb_m2s_uart2_dat),
+    .wb_uart2_sel_o      (wb_m2s_uart2_sel),
+    .wb_uart2_we_o       (wb_m2s_uart2_we),
+    .wb_uart2_cyc_o      (wb_m2s_uart2_cyc),
+    .wb_uart2_stb_o      (wb_m2s_uart2_stb),
+    .wb_uart2_dat_i      (wb_s2m_uart2_dat),
+    .wb_uart2_ack_i      (wb_s2m_uart2_ack),
+    .wb_uart2_err_i      (wb_s2m_uart2_err),
+    .wb_uart2_rty_i      (wb_s2m_uart2_rty),
 
 // GPIO
     .wb_gpio_adr_o      (wb_m2s_gpio_adr),
@@ -559,41 +599,75 @@ module rv32i_soc #(
 
 
     // ============================================
-    //                  UART
+    //                  UART 1
     // ============================================  
 
-   wire [7:0] 		       uart_rdt;
-   assign wb_s2m_uart_dat = {24'd0, uart_rdt};
-   assign wb_s2m_uart_err = 1'b0;
-   assign wb_s2m_uart_rty = 1'b0;
+   wire [7:0] 		       uart1_rdt;
+   assign wb_s2m_uart1_dat = {24'd0, uart1_rdt};
+   assign wb_s2m_uart1_err = 1'b0;
+   assign wb_s2m_uart1_rty = 1'b0;
 
    uart_top uart16550_0
      (// Wishbone slave interface
 
       .wb_clk_i	(clk),
       .wb_rst_i	(wb_rst),
-      .wb_adr_i	(wb_m2s_uart_adr[4:2]),
-      .wb_dat_i	(wb_m2s_uart_dat[7:0]),
-      .wb_we_i	(wb_m2s_uart_we),
-      .wb_cyc_i	(wb_m2s_uart_cyc),
-      .wb_stb_i	(wb_m2s_uart_stb),
-      .wb_sel_i	(4'b0), // Not used in 8-bit mode
-      .wb_dat_o	(uart_rdt),
-      .wb_ack_o	(wb_s2m_uart_ack),
+      .wb_adr_i	(wb_m2s_uart1_adr[4:2]),
+      .wb_dat_i	(wb_m2s_uart1_dat[7:0]),
+      .wb_we_i	(wb_m2s_uart1_we),
+      .wb_cyc_i	(wb_m2s_uart1_cyc),
+      .wb_stb_i	(wb_m2s_uart1_stb),
+      .wb_dat_o	(uart1_rdt),
+      .wb_ack_o	(wb_s2m_uart1_ack),
 
       // Outputs
-      .int_o     (uart_irq),
-      .stx_pad_o (o_uart_tx),
+      .int_o     (uart1_irq),
+      .stx_pad_o (o_uart1_tx),
       .rts_pad_o (), // intentionally left unconnected
       .dtr_pad_o (), // intentionally left unconnected
 
       // Inputs
-      .srx_pad_i (i_uart_rx),
+      .srx_pad_i (i_uart1_rx),
       .cts_pad_i (1'b0),
       .dsr_pad_i (1'b0),
       .ri_pad_i  (1'b0),
       .dcd_pad_i (1'b0));
 
+
+    // ============================================
+    //                  UART 2
+    // ============================================  
+
+   wire [7:0] 		       uart2_rdt;
+   assign wb_s2m_uart2_dat = {24'd0, uart2_rdt};
+   assign wb_s2m_uart2_err = 1'b0;
+   assign wb_s2m_uart2_rty = 1'b0;
+
+   uart_top uart16550_1
+     (// Wishbone slave interface
+
+      .wb_clk_i	(clk),
+      .wb_rst_i	(wb_rst),
+      .wb_adr_i	(wb_m2s_uart2_adr[4:2]),
+      .wb_dat_i	(wb_m2s_uart2_dat[7:0]),
+      .wb_we_i	(wb_m2s_uart2_we),
+      .wb_cyc_i	(wb_m2s_uart2_cyc),
+      .wb_stb_i	(wb_m2s_uart2_stb),
+      .wb_dat_o	(uart2_rdt),
+      .wb_ack_o	(wb_s2m_uart2_ack),
+
+      // Outputs
+      .int_o     (uart2_irq),
+      .stx_pad_o (o_uart2_tx),
+      .rts_pad_o (), // intentionally left unconnected
+      .dtr_pad_o (), // intentionally left unconnected
+
+      // Inputs
+      .srx_pad_i (i_uart2_rx),
+      .cts_pad_i (1'b0),
+      .dsr_pad_i (1'b0),
+      .ri_pad_i  (1'b0),
+      .dcd_pad_i (1'b0));
 
     // ============================================
     //                  GPIO
@@ -606,7 +680,7 @@ module rv32i_soc #(
         .wb_clk_i     (clk), 
         .wb_rst_i     (wb_rst), 
         .wb_cyc_i     (wb_m2s_gpio_cyc), 
-        .wb_adr_i     ({2'b0,wb_m2s_gpio_adr[5:2],2'b0}), 
+        .wb_adr_i     ({wb_m2s_gpio_adr[4:2],2'b0}), 
         .wb_dat_i     (wb_m2s_gpio_dat), 
         .wb_sel_i     (wb_m2s_gpio_sel),
         .wb_we_i      (wb_m2s_gpio_we), 
@@ -626,7 +700,7 @@ module rv32i_soc #(
     assign wb_s2m_i2c_dat[31:8] = 'h0;
     i2c_master_top  i2c_master_inst (
         .wb_clk_i     (clk), 
-        .wb_rst_i     (wb_rst), 
+        .wb_rst_i     (1'b0), 
         .arst_i       (reset_n),
         .wb_cyc_i     (wb_m2s_i2c_cyc), 
         .wb_adr_i      ({wb_m2s_i2c_adr[4:2]}), 
@@ -647,107 +721,26 @@ module rv32i_soc #(
         assign wb_s2m_i2c_err = 1'b0;
         assign wb_s2m_i2c_rty = 1'b0;
 
+
+    // ============================================
+    //            SRAM Memory Instances
+    // ============================================    
+
+
 `ifdef USE_SRAM
-
-    // ============================================
-    //            SRAM Memory Instances
-    // ============================================    
-
-
     sram_8k_wrapper data_mem_inst (
-        .clk_i       (clk            ),
-        .rst_i       (wb_rst         ),
-        .cyc_i       (wb_m2s_dmem_cyc), 
-        .stb_i       (wb_m2s_dmem_stb),
-        .adr_i       (wb_m2s_dmem_adr),
-        .we_i        (wb_m2s_dmem_we ),
-        .sel_i       (wb_m2s_dmem_sel),
-        .dat_i       (wb_m2s_dmem_dat),
-        .dat_o       (wb_s2m_dmem_dat),
-        .ack_o       (wb_s2m_dmem_ack)
-    );
-
-
-
-    logic [31:0] imem_inst;
-
-    logic [31:0] imem_addr;
-    
-    assign imem_addr = (sel_boot_rom | core_halted) ? wb_m2s_dmem_adr: current_pc;
-
-    sram_32k_wrapper inst_mem_inst (
-        .clk_i       (clk            ),
-        .rst_i       (wb_rst         ),
-        .cyc_i       ((sel_boot_rom | core_halted) ?  wb_m2s_imem_cyc : 1'b1), 
-        .stb_i       ((sel_boot_rom | core_halted) ?  wb_m2s_imem_stb : 1'b1),
-        .adr_i       (imem_addr      ),
-        .we_i        ((sel_boot_rom | core_halted) & wb_m2s_imem_we),
-        .sel_i       (wb_m2s_imem_sel),
-        .dat_i       (wb_m2s_imem_dat),
-        .dat_o       (wb_s2m_imem_dat),
-        .ack_o       (wb_s2m_imem_ack)
-    );
-
-    assign imem_inst = wb_s2m_imem_dat;
-
-
-
 `elsif PD_BUILD
-    // ============================================
-    //            SRAM Memory Instances
-    // ============================================    
-
-     sram_8k_wrapper data_mem_inst (
-        .clk_i       (clk            ),
-        .rst_i       (wb_rst         ),
-        .cyc_i       (wb_m2s_dmem_cyc), 
-        .stb_i       (wb_m2s_dmem_stb),
-        .adr_i       (wb_m2s_dmem_adr),
-        .we_i        (wb_m2s_dmem_we ),
-        .sel_i       (wb_m2s_dmem_sel),
-        .dat_i       (wb_m2s_dmem_dat),
-        .dat_o       (wb_s2m_dmem_dat),
-        .ack_o       (wb_s2m_dmem_ack)
-    );
-
-
-
-    logic [31:0] imem_inst;
-
-    logic [31:0] imem_addr;
-    
-    assign imem_addr = (sel_boot_rom | core_halted) ? wb_m2s_dmem_adr: current_pc;
-
-    sram_32k_wrapper inst_mem_inst (
-        .clk_i       (clk            ),
-        .rst_i       (wb_rst         ),
-        .cyc_i       ((sel_boot_rom | core_halted) ?  wb_m2s_imem_cyc : 1'b1), 
-        .stb_i       ((sel_boot_rom | core_halted) ?  wb_m2s_imem_stb : 1'b1),
-        .adr_i       (imem_addr      ),
-        .we_i        ((sel_boot_rom | core_halted) & wb_m2s_imem_we),
-        .sel_i       (wb_m2s_imem_sel),
-        .dat_i       (wb_m2s_imem_dat),
-        .dat_o       (wb_s2m_imem_dat),
-        .ack_o       (wb_s2m_imem_ack)
-    );
-
-    assign imem_inst = wb_s2m_imem_dat;
-
- 
-  
-`else
-    // ============================================
-    //             Data Memory Instance
-    // ============================================
-
+    sram_8k_wrapper data_mem_inst (
+`else 
     data_mem #(
         .DEPTH(DMEM_DEPTH)
     ) data_mem_inst (
+`endif
         .clk_i       (clk            ),
         .rst_i       (wb_rst         ),
         .cyc_i       (wb_m2s_dmem_cyc), 
         .stb_i       (wb_m2s_dmem_stb),
-        .adr_i       (wb_m2s_dmem_adr),
+        .adr_i       (wb_m2s_dmem_adr[12:2]),
         .we_i        (wb_m2s_dmem_we ),
         .sel_i       (wb_m2s_dmem_sel),
         .dat_i       (wb_m2s_dmem_dat),
@@ -756,9 +749,6 @@ module rv32i_soc #(
     );
 
 
-    // ============================================
-    //          Instruction Memory Instance
-    // ============================================
 
     logic [31:0] imem_inst;
 
@@ -766,14 +756,20 @@ module rv32i_soc #(
     
     assign imem_addr = (sel_boot_rom | core_halted) ? wb_m2s_dmem_adr: current_pc;
 
+`ifdef USE_SRAM
+    sram_32k_wrapper inst_mem_inst (
+`elsif PD_BUILD
+    sram_32k_wrapper inst_mem_inst (
+`else 
     data_mem #(
         .DEPTH(IMEM_DEPTH)
     ) inst_mem_inst (
+`endif
         .clk_i       (clk            ),
         .rst_i       (wb_rst         ),
         .cyc_i       ((sel_boot_rom | core_halted) ?  wb_m2s_imem_cyc : 1'b1), 
         .stb_i       ((sel_boot_rom | core_halted) ?  wb_m2s_imem_stb : 1'b1),
-        .adr_i       (imem_addr      ),
+        .adr_i       (imem_addr[14:2] ),
         .we_i        ((sel_boot_rom | core_halted) & wb_m2s_imem_we),
         .sel_i       (wb_m2s_imem_sel),
         .dat_i       (wb_m2s_imem_dat),
@@ -783,7 +779,9 @@ module rv32i_soc #(
 
     assign imem_inst = wb_s2m_imem_dat;
 
-`endif
+
+
+
 
     // ============================================
     //                 CLINT INSTANCE
@@ -809,7 +807,7 @@ module rv32i_soc #(
     //                 PTC INSTANCE
     // ============================================
 
-    logic pwm_padoen_o;
+
     ptc_top ptc_top_inst(
 
             // Wishbone Interface
@@ -828,7 +826,6 @@ module rv32i_soc #(
 
             // External PTC Interface
             .gate_clk_pad_i (1'b0), // not using external clk
-            .capt_pad_i     (1'b0), // capture feature is not used 
             .pwm_pad_o      (pwm_pad_o),
             .oen_padoen_o   (pwm_padoen_o)
     );
@@ -882,14 +879,17 @@ module rv32i_soc #(
 
     // Inst selection mux
     assign sel_boot_rom = &current_pc[31:12]; // 0xfffff000 - to - 0xffffffff 
-    always @(posedge clk) sel_boot_rom_ff <= sel_boot_rom;
+    always @(posedge clk, negedge reset_n) begin 
+        if(~reset_n) sel_boot_rom_ff <= 'b0;
+        else         sel_boot_rom_ff <= sel_boot_rom;
+    end
     mux2x1 #(
         .n(32)
     ) rom_imem_inst_sel_mux (
         .in0    (imem_inst      ),
         .in1    (rom_inst_ff    ),
         .sel    (sel_boot_rom_ff),
-        .out    (inst           )
+        .out_    (inst           )
     );
 
 
@@ -898,7 +898,7 @@ module rv32i_soc #(
     // ============================================
 		debug_top debug_top_inst
 			(
-            `ifndef VIVADO_BUILD
+            `ifndef USE_FPGA_JTAG
 				.tms_i		(tms_i),
 				.tck_i		(tck_i),
 				.trstn_i	(reset_n),
@@ -939,7 +939,7 @@ module rv32i_soc #(
 
     // Platform Level Interrupt Controller, according the riscv spec 
     plic_top #(
-        .NUM_SOURCES_P (6),
+        .NUM_SOURCES_P (7),
         .NUM_CONTEXTS_P(1)
     ) plic_inst (
         .wb_clk_i    (clk             ),
@@ -952,7 +952,7 @@ module rv32i_soc #(
         .wb_dat_i    (wb_m2s_plic_dat),
         .wb_dat_o    (wb_s2m_plic_dat),
         .wb_ack_o    (wb_s2m_plic_ack),
-        .int_sources({uart_irq, spi_flash_irq, spi2_irq, gpio_irq, i2c_irq, ptc_irq}), // lsb has the small id number so high priority incase of priority clash
+        .int_sources({uart2_irq,uart1_irq, spi_flash_irq, spi2_irq, gpio_irq, i2c_irq, ptc_irq}), // lsb has the small id number so high priority incase of priority clash
         .external_irq(external_irq)
     );
     
