@@ -13,6 +13,7 @@ wb_ref_model wb_ref;
  
   wb_x_spi_module spiref_model1;
   wb_x_spi_module spiref_model2;
+    wb_x_i2c_ref_model i2c_ref_model;
 soc_scb scb ; 
 string peripheral_name;
 
@@ -23,6 +24,7 @@ scb = soc_scb::type_id::create("scb", this);
 wb_ref = wb_ref_model::type_id::create("wb_ref", this) ; 
 spiref_model1 = wb_x_spi_module::type_id::create("spiref_model1", this);
 spiref_model2 = wb_x_spi_module::type_id::create("spiref_model2", this);
+i2c_ref_model= wb_x_i2c_ref_model::type_id::create("i2c_ref_model", this);
 if (!uvm_config_db#(string)::get(this, "", "PERIPHERAL", peripheral_name))
       `uvm_warning("SCOREBOARD", "Could not retrieve PERIPHERAL from config DB");
      
@@ -38,6 +40,7 @@ if(peripheral_name=="SPI1")
   if(peripheral_name=="SPI2")begin 
     scb.spi_ref_model = spiref_model2; end 
 
+scb.i2c_ref_model=i2c_ref_model;
 //connect wb_ref to scb
 wb_ref.wb2scb_port.connect(scb.wb_in);
 
@@ -45,6 +48,9 @@ wb_ref.wb2scb_port.connect(scb.wb_in);
 //connect wb_ref to spiref_model1
 wb_ref.wb2spi1ref_port.connect(spiref_model1.wb_in);
 wb_ref.wb2spi2ref_port.connect(spiref_model2.wb_in);
+
+//i2c to sc 
+wb_ref.wb2i2cref_port.connect(i2c_ref_model.wb_imp);
 
 
 

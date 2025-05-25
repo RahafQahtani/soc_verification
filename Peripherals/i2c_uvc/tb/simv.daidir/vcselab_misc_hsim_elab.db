@@ -1,6 +1,6 @@
 psSimBaseName                      	simv
 psLogFileName                      	NULL
-psDaiDir                           	/home/Yasir_Alqulayti/DV/soc/i2c/tb/simv.daidir
+psDaiDir                           	/home/Yasir_Alqulayti/DV/Wishbone_x_I2C/tb/simv.daidir
 destPath                           	csrc/
 fSharedMasterElab                  	0
 fHsimPCSharedLibSpecified          	0

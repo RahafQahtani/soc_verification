@@ -54,6 +54,11 @@ function void write_wb(wb_transaction tr);   // type need to be fixed
         
         $display("UART transaction received (addr: %h)", tr.addr);
     end
+    else if (tr.addr >= 32'h20000300 && tr.addr <= 32'h200003FF) begin
+
+        
+        $display("i2c transaction received (addr: %h)", tr.addr);
+    end
     else begin
         $display("Unknown address: %h", tr.addr);
     end

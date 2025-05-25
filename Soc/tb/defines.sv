@@ -30,6 +30,6 @@
 `define SOC_CLINT_END_ADDRESS 32'h20000C0F
 
 
-
+`define OFFSET 4
 
 

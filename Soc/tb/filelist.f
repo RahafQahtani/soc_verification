@@ -1,10 +1,9 @@
-// ========== UART ==========  //NEED TO BE UPDATED
-//+incdir+../../Peripherals/uart_uvc
-//../../Peripherals/uart_uvc/sv/ 
-//../../Peripherals/uart_uvc/sv/
+
 
 +define+SOC
 defines.sv
+
+
 // ========== wb_uvc ==========
 +incdir+../../Soc/wb_bfm/sv
 ../../Soc/wb_bfm/sv/wb_pkg.sv
@@ -29,8 +28,32 @@ defines.sv
 
 // ========== spi ref_model ==========
 +incdir+../../Peripherals/spi_uvc/wb_x_spi_module/sv
-../../Peripherals/spi_uvc/wb_x_spi_module/sv/spi_module_pkg.sv         
+../../Peripherals/spi_uvc/wb_x_spi_module/sv/spi_module_pkg.sv  
+  
+// ========== UART ==========  //NEED TO BE UPDATED
 
++incdir+../../Peripherals/uart_uvc/sv
++incdir+../../Peripherals/uart_uvc/uart/sv
++incdir+../../Peripherals/uart_uvc/wb_uart_module/sv
++incdir+../../Peripherals/uart_uvc/tests
++incdir+../../Peripherals/uart_uvc/sequences
+../../Peripherals/uart_uvc/sv/uart_defines.sv
+../../Peripherals/uart_uvc/uart/sv/uart_pkg.sv          //UART pkg should be there
+../../Peripherals/uart_uvc/uart/sv/uart_if.sv           //This is UART interface
+//../../Peripherals/uart_uvc/wb_uart_module/sv/wb_uart_module_pkg.sv      
+
+// ========== I2C ========== 
++incdir+../../Peripherals/i2c_uvc/sv 
++incdir+../../Peripherals/i2c_uvc/tests
++incdir+../../Peripherals/i2c_uvc/sequences
++incdir+../../Peripherals/i2c_uvc/i2c/sv 
+../../Peripherals/i2c_uvc/i2c/sv/i2c_pkg.sv
+../../Peripherals/i2c_uvc/i2c/sv/i2c_if.sv
++incdir+../../Peripherals/i2c_uvc/wb_x_i2c_module/sv
+../../Peripherals/i2c_uvc/wb_x_i2c_module/sv/i2c_module_pkg.sv
+
+
+ 
 // ========== SOC ==========
 +incdir+../../Soc/soc_ref_module
 ../../Soc/soc_ref_module/soc_pkg.sv
