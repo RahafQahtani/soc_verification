@@ -100,10 +100,14 @@ module rv32i_soc #(
         .i_miso           (i_miso),
 
         // I2C
-        .i_scl            (i_scl),
+        `ifndef SOC 
+         .i_scl            (i_scl),
+        `endif
         .o_scl            (o_scl),
         .o_scl_oen        (o_scl_oen),
+         `ifndef SOC 
         .i_sda            (i_sda),
+        `endif
         .o_sda            (o_sda),
         .o_sda_oen        (o_sda_oen),
 

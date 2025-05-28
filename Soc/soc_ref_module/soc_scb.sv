@@ -19,19 +19,17 @@ class soc_scb extends uvm_scoreboard;
   `uvm_analysis_imp_decl(_wb)
     uvm_analysis_imp_wb#(wb_transaction, soc_scb) wb_in;
 
-   `uvm_analysis_imp_decl(_wb_i2c_ref_model)
-    uvm_analysis_imp_wb_i2c_ref_model#(wb_transaction, i2c_scoreboard)  ref_model_imp;
 
   `uvm_analysis_imp_decl(_i2c)
-   uvm_analysis_imp_i2c#(i2c_transaction, i2c_scoreboard)  i2c_in;
+   uvm_analysis_imp_i2c#(i2c_transaction, soc_scb)  i2c_in;
 
   // Status
-  int total_packets_received = 0;
   int total_matched_packets  = 0;
   int total_wrong_packets    = 0;
-  int total_spi_transactions = 0;
-  int total_ref_transactions = 0;
 
+//queues 
+//  i2c_transaction i2c_queue[$];   
+//     wb_transaction wb_queue[$];  
   // Reference model instance 
   wb_x_spi_module spi_ref_model;
   wb_x_i2c_ref_model i2c_ref_model;
@@ -53,8 +51,7 @@ class soc_scb extends uvm_scoreboard;
     `uvm_info("SCOREBOARD", $sformatf("Received SPI1 Transaction: %s", t.sprint()), UVM_MEDIUM)
     spi_ref_model.rx_queue.push_back(t.data_out);
     spi_ref_model.spi_queue.push_back(t);
-    total_spi_transactions++;
-    total_packets_received++;
+
     compare_spi_transactions();
   endfunction
 
@@ -62,19 +59,16 @@ class soc_scb extends uvm_scoreboard;
     `uvm_info("SCOREBOARD", $sformatf("Received SPI2 Transaction: %s", t.sprint()), UVM_MEDIUM)
     spi_ref_model.rx_queue.push_back(t.data_out);
     spi_ref_model.spi_queue.push_back(t);
-    total_spi_transactions++;
-    total_packets_received++;
+
     compare_spi_transactions();
   endfunction
 
 function void write_i2c(i2c_transaction tr);
-    	i2c_transaction clone_tr;
-		$cast(clone_tr,tr.clone());
-        i2c_ref_model.i2c_queue.push_back(clone_tr);
-        `uvm_info("i2c_SCOREBOARD", $sformatf("Received i2c Transaction: %s", tr.sprint()), UVM_FULL)
+
+        // i2c_queue.push_back(tr);
+        i2c_ref_model.i2c_queue.push_back(tr);
+        `uvm_info("SCOREBOARDy", $sformatf("Received i2c Transaction: %s", tr.sprint()), UVM_FULL)
                   
-        total_i2c_transactions++;//because 2 byte in one transaction and we count byte wise 
-        total_packets_received++;
         
         i2c_compare_transactions();
     endfunction
@@ -100,10 +94,12 @@ function void write_i2c(i2c_transaction tr);
      compare_spi_transactions();
      end 
   if(result.peripheral_name == "I2C" ) begin
-     wb_transaction clone_tr;
-		$cast(clone_tr,tr.clone());
-        i2c_ref_model.wb_queue.push_back(clone_tr);
-        `uvm_info("i2c_SCOREBOARD", $sformatf("Received WB Transaction: %s", tr.sprint()), UVM_FULL)
+    //  wb_transaction clone_tr;
+		// $cast(clone_tr,t.clone());
+    // wb_queue.push_back(t);
+        i2c_ref_model.wb_queue.push_back(t);
+        `uvm_info("SCOREBOARD", $sformatf("Received WB Transaction: %s", t.sprint()), UVM_FULL)
+
  end             
     
   endfunction
@@ -152,22 +148,28 @@ endfunction
 
 
   function void i2c_compare_transactions();
-        if (i2c_ref_model.i2c_queue.size() > 0 && i2c_ref_model.wb_queue.size() > 0) begin
+       if (i2c_ref_model.i2c_queue.size() > 0 ) begin //&& wb_queue.size() > 0
+        // if (i2c_ref_model.i2c_queue.size() > 0 && i2c_ref_model.wb_queue.size() > 0) begin //
             i2c_transaction i2c_pkt = i2c_ref_model.i2c_queue.pop_front();
             wb_transaction wb_pkt = i2c_ref_model.wb_queue.pop_front();
-            
-            result.sub_sequence_name = "I2C Data Compare";
-              result.result_data = $sformatf("Expected: %h, Actual: %h",i2c_pkt.din, wb_pkt.dout);
-              result.result_status = (i2c_pkt.din == wb_pkt.dout) ? "PASSED" : "FAILED";
+               wb_transaction wb_pkt = i2c_ref_model.wb_queue.pop_front();
+            if (wb_pkt.op_type==wb_write)begin 
+              result.sub_sequence_name = "I2C Data Compare";
+              result.result_data = $sformatf("Expected: %0h, Actual: %0h",i2c_pkt.din, wb_pkt.din);
+              result.result_status = (i2c_pkt.din == wb_pkt.din) ? "PASSED" : "FAILED";
               results.push_back(result);
 
-            if (wb_pkt.op_type==wb_write)begin 
                 if (i2c_pkt.din == wb_pkt.din) 
                    total_matched_packets++;
                 else 
                   total_wrong_packets++;
             end  
             else if  (wb_pkt.op_type==wb_read) begin 
+                 result.sub_sequence_name = "I2C Data Compare";
+              result.result_data = $sformatf("Expected: %h, Actual: %h",i2c_pkt.din, wb_pkt.din);
+              result.result_status = (i2c_pkt.din == wb_pkt.din) ? "PASSED" : "FAILED";
+              results.push_back(result);
+
                 if (i2c_pkt.dout == wb_pkt.din) 
                    total_matched_packets++;
                 else 

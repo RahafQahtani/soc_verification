@@ -49,7 +49,7 @@ class clk10_rst5_seq extends uvm_sequence #(clock_and_reset_sequence_item);
 
     cr = clock_and_reset_sequence::type_id::create("cr");
     cr.clock_period          = 10;
-    cr.reset_delay           =50;
+    cr.reset_delay           =5;
     cr.run_clock             = 1;
     `uvm_send(cr)
     #300ns;

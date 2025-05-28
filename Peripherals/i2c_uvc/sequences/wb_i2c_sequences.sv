@@ -76,7 +76,11 @@ class i2c_400k_seq extends wb_base_seq;
 
 
 #60 //waiting to WB reset to finish  
-
+               `uvm_do_with(req,
+      { op_type == wb_write;
+        addr == `GPIO_BASE_ADDRESS + `OFFSET * 3;
+        din == 32'hffffffff;
+      })
 //  prescale the SCL clock
     `uvm_do_with(req,
                  { op_type == wb_write ; 
@@ -131,13 +135,18 @@ class i2c_write_byte_seq extends wb_base_seq;
 
   virtual task body();
     `uvm_info(get_type_name(), "Executing sequence", UVM_LOW)
-
-
+ 
+    //  `uvm_do_with(req,
+    //   { op_type == wb_write;
+    //     addr == `GPIO_BASE_ADDRESS + `OFFSET * 3;
+    //     din == 32'hffffffff;
+    //   })
  // sendign heaeder byte 
-     `uvm_do_with(req,
+`uvm_do_with(req,
                  { op_type == wb_write ; 
                    addr == i2c_addr+3*offset; //i2c transmit register
                    din == {slave_addr,1'b0}; // 7-1: slave addr [1010101], 0: write
+                  
                    valid_sb == 0;  //indicate to scoreboard that this is configuration command
                  })
       `uvm_do_with(req,
@@ -168,7 +177,9 @@ class i2c_write_byte_seq extends wb_base_seq;
                    valid_sb == 0;  //indicate to scoreboard that this is configuration command
                  })
 
-  if (!req.dout[7] && !req.dout[1]) begin // check for ACK && TIP both bits should be de-asserted
+  if (!req.dout[7] && !req.dout[1]) begin 
+    // check for ACK && TIP both bits should be de-asserted
+     `uvm_info (get_type_name(), "break pooling",UVM_HIGH);
    break; // i2c finish transmiting 
   end
   else if (count_polling > 1_000_000) 
@@ -182,6 +193,7 @@ class i2c_write_byte_seq extends wb_base_seq;
        `uvm_do_with(req,
                  { op_type == wb_write ; 
                    addr == i2c_addr+3*offset; //i2c transmit register
+                   din  == 32'h00000031; 
                    valid_sb == 1;  //indicate that it's a read sequence
                  })
       `uvm_do_with(req,
@@ -242,18 +254,24 @@ class i2c_read_byte_seq extends wb_base_seq;
 
   `uvm_object_utils(i2c_read_byte_seq)
 
+  
   bit [6:0] slave_addr =7'b1010101 ;
   int count_polling = 0;
 
   virtual task body();
     `uvm_info(get_type_name(), "Executing sequence", UVM_LOW)
-
-
+ 
+    //  `uvm_do_with(req,
+    //   { op_type == wb_write;
+    //     addr == `GPIO_BASE_ADDRESS + `OFFSET * 3;
+    //     din == 32'hffffffff;
+    //   })
  // sendign heaeder byte 
-     `uvm_do_with(req,
+`uvm_do_with(req,
                  { op_type == wb_write ; 
                    addr == i2c_addr+3*offset; //i2c transmit register
-                   din == {slave_addr,1'b1}; // 7-1: slave addr [1010101], 0: write
+                   din == {slave_addr,1'b0}; // 7-1: slave addr [1010101], 0: write
+                  
                    valid_sb == 0;  //indicate to scoreboard that this is configuration command
                  })
       `uvm_do_with(req,
@@ -284,7 +302,9 @@ class i2c_read_byte_seq extends wb_base_seq;
                    valid_sb == 0;  //indicate to scoreboard that this is configuration command
                  })
 
-  if (!req.dout[7] && !req.dout[1]) begin // check for ACK && TIP both bits should be de-asserted
+  if (!req.dout[7] && !req.dout[1]) begin 
+    // check for ACK && TIP both bits should be de-asserted
+     `uvm_info (get_type_name(), "break pooling",UVM_HIGH);
    break; // i2c finish transmiting 
   end
   else if (count_polling > 1_000_000) 
@@ -294,10 +314,17 @@ class i2c_read_byte_seq extends wb_base_seq;
 
 
  
+// sending dumy data byte
+       `uvm_do_with(req,
+                 { op_type == wb_write ; 
+                   addr == i2c_addr+3*offset; //i2c transmit register
+                   din  == 32'b00110001; 
+                   valid_sb == 1;  //indicate that it's a read sequence
+                 })
       `uvm_do_with(req,
                  { op_type == wb_write ; 
                    addr == i2c_addr+4*offset; //i2c command register
-                   din == 8'b0110_0000; //STO & RD
+                   din == 8'b0101_0000; //STO & WR
                    valid_sb == 0;  //indicate that it's a read sequence
                  })
 
@@ -305,9 +332,9 @@ class i2c_read_byte_seq extends wb_base_seq;
 
 
 
-//////////////////
+////////////////
 //polling for STOP
-/////////////////
+///////////////
    // this  additional polling transaction is "necessary" to bypass the initial dout value of 8'b0000_0000
      `uvm_do_with(req,
                  { op_type == wb_read ; 
@@ -320,31 +347,25 @@ class i2c_read_byte_seq extends wb_base_seq;
     count_polling++;
       `uvm_do_with(req,
                  { op_type == wb_read ; 
-                   addr ==i2c_addr+4*offset; //i2c status register
+                   addr == i2c_addr+4*offset; //i2c status register
                    valid_sb == 0;  //indicate to scoreboard that this is configuration command
                  })
 
-
-  if (!req.dout[6] ) begin // check for STOP &&  should be de-asserted
-   //$display("🥶 finsih");
-  break; // i2c finish transmiting 
+  if (!req.dout[6]) begin // check for STOP &&  should be de-asserted
+   break; // i2c finish transmiting 
   end
   else if (count_polling > 1_000_000) 
     `uvm_fatal (get_type_name(), "WB took too long to poll I2C");
   end 
 
 
-     `uvm_do_with(req,
-    { op_type == wb_read ; 
-                   addr == i2c_addr+3*offset; //i2c reciver register
-                   din == 0; //i2c reciver register
-                   valid_sb == 0;  //indicate to scoreboard that this is configuration command
-                 })
     
 
 
 
   endtask : body
+
+
 
 
 

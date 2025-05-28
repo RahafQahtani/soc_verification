@@ -1,16 +1,16 @@
-class mc_seq extends uvm_sequence;
+class mc_seq1 extends uvm_sequence;
     
-    `uvm_object_utils(mc_seq)
+    `uvm_object_utils(mc_seq1)
   
    //declare the multichannel_sequencer
    
  `ifndef SOC
-	   `uvm_declare_p_sequencer(mc_sequencer)
+	   `uvm_declare_p_sequencer(mc_seq1uencer)
     `else
 	   `uvm_declare_p_sequencer(soc_mcsequencer)
    `endif
 
-    function new(string name ="mc_seq");
+    function new(string name ="mc_seq1");
         super.new(name);
     endfunction:new
 
@@ -46,11 +46,11 @@ task pre_body();
 
 
 
-endclass: mc_seq
+endclass: mc_seq1
 
 
 
-class en_spi1_seq extends mc_seq;
+class en_spi1_seq extends mc_seq1;
 
   `uvm_object_utils(en_spi1_seq)
 
@@ -66,7 +66,7 @@ class en_spi1_seq extends mc_seq;
   endtask : run_phase
 
   virtual task body;
-    `uvm_info(get_type_name(), "body of SPI1 enable mc_sequence 🧑🏻‍⚖️", UVM_FULL)
+    `uvm_info(get_type_name(), "body of SPI1 enable mc_seq1uence 🧑🏻‍⚖️", UVM_FULL)
     fork
       `uvm_do_on(en_spi, p_sequencer.wb_seqr)
     join
@@ -74,7 +74,7 @@ class en_spi1_seq extends mc_seq;
 
 endclass : en_spi1_seq
 
-class en_spi2_seq extends mc_seq;
+class en_spi2_seq extends mc_seq1;
 
   `uvm_object_utils(en_spi2_seq)
 
@@ -90,7 +90,7 @@ class en_spi2_seq extends mc_seq;
   endtask : run_phase
 
   virtual task body;
-    `uvm_info(get_type_name(), "body of SPI2 enable mc_sequence 🧑🏻‍⚖️", UVM_FULL)
+    `uvm_info(get_type_name(), "body of SPI2 enable mc_seq1uence 🧑🏻‍⚖️", UVM_FULL)
     fork
       `uvm_do_on(en_spi, p_sequencer.wb_seqr)
     join
@@ -102,7 +102,7 @@ endclass : en_spi2_seq
 
 
 
-class write_wbxspi1_seq extends mc_seq;
+class write_wbxspi1_seq extends mc_seq1;
   `uvm_object_utils(write_wbxspi1_seq)
 
   function new(string name = "write_wbxspi1_seq");
@@ -113,7 +113,7 @@ class write_wbxspi1_seq extends mc_seq;
   spi_slave_response_seq spi_seq;
 
   virtual task body;
-    `uvm_info(get_type_name(), "body of SPI1 write mc_sequence 🧑🏻‍⚖️", UVM_FULL)
+    `uvm_info(get_type_name(), "body of SPI1 write mc_seq1uence 🧑🏻‍⚖️", UVM_FULL)
     fork
       `uvm_do_on(wb_spi1_write, p_sequencer.wb_seqr)
       `uvm_do_on(spi_seq, p_sequencer.spi1_seqr)
@@ -121,7 +121,7 @@ class write_wbxspi1_seq extends mc_seq;
   endtask : body
 endclass : write_wbxspi1_seq
 
-class write_wbxspi2_seq extends mc_seq;
+class write_wbxspi2_seq extends mc_seq1;
   `uvm_object_utils(write_wbxspi2_seq)
 
   function new(string name = "write_wbxspi2_seq");
@@ -132,7 +132,7 @@ class write_wbxspi2_seq extends mc_seq;
   spi_slave_response_seq spi_seq;
 
   virtual task body;
-    `uvm_info(get_type_name(), "body of SPI2 write mc_sequence 🧑🏻‍⚖️", UVM_FULL)
+    `uvm_info(get_type_name(), "body of SPI2 write mc_seq1uence 🧑🏻‍⚖️", UVM_FULL)
     fork
       `uvm_do_on(wb_spi2_write, p_sequencer.wb_seqr)
       `uvm_do_on(spi_seq, p_sequencer.spi2_seqr)
@@ -140,7 +140,7 @@ class write_wbxspi2_seq extends mc_seq;
   endtask : body
 endclass : write_wbxspi2_seq
 
-class read_wbxspi1_seq extends mc_seq;
+class read_wbxspi1_seq extends mc_seq1;
   `uvm_object_utils(read_wbxspi1_seq)
 
   function new(string name = "read_wbxspi1_seq");
@@ -151,7 +151,7 @@ class read_wbxspi1_seq extends mc_seq;
   spi_slave_response_seq spi_seq;
 
   virtual task body;
-    `uvm_info(get_type_name(), "body of SPI1 read mc_sequence 🧑🏻‍⚖️", UVM_FULL)
+    `uvm_info(get_type_name(), "body of SPI1 read mc_seq1uence 🧑🏻‍⚖️", UVM_FULL)
     fork
       `uvm_do_on(wb_spi1_read, p_sequencer.wb_seqr)
       `uvm_do_on(spi_seq, p_sequencer.spi1_seqr)
@@ -159,7 +159,7 @@ class read_wbxspi1_seq extends mc_seq;
   endtask : body
 endclass : read_wbxspi1_seq
 
-class read_wbxspi2_seq extends mc_seq;
+class read_wbxspi2_seq extends mc_seq1;
   `uvm_object_utils(read_wbxspi2_seq)
 
   function new(string name = "read_wbxspi2_seq");
@@ -170,7 +170,7 @@ class read_wbxspi2_seq extends mc_seq;
   spi_slave_response_seq spi_seq;
 
   virtual task body;
-    `uvm_info(get_type_name(), "body of SPI2 read mc_sequence 🧑🏻‍⚖️", UVM_FULL)
+    `uvm_info(get_type_name(), "body of SPI2 read mc_seq1uence 🧑🏻‍⚖️", UVM_FULL)
     fork
       `uvm_do_on(wb_spi2_read, p_sequencer.wb_seqr)
       `uvm_do_on(spi_seq, p_sequencer.spi2_seqr)
@@ -178,7 +178,7 @@ class read_wbxspi2_seq extends mc_seq;
   endtask : body
 endclass : read_wbxspi2_seq
 
-class flag_wbxspi1_seq extends mc_seq;
+class flag_wbxspi1_seq extends mc_seq1;
   `uvm_object_utils(flag_wbxspi1_seq)
 
   function new(string name = "flag_wbxspi1_seq");
@@ -189,7 +189,7 @@ class flag_wbxspi1_seq extends mc_seq;
   spi_slave_response_seq spi_seq;
 
   virtual task body;
-    `uvm_info(get_type_name(), "body of SPI1 flag mc_sequence 🧑🏻‍⚖️", UVM_FULL)
+    `uvm_info(get_type_name(), "body of SPI1 flag mc_seq1uence 🧑🏻‍⚖️", UVM_FULL)
     fork
       `uvm_do_on(wb_spi1_flag, p_sequencer.wb_seqr)
       `uvm_do_on(spi_seq, p_sequencer.spi1_seqr)
@@ -197,7 +197,7 @@ class flag_wbxspi1_seq extends mc_seq;
   endtask : body
 endclass : flag_wbxspi1_seq
 
-class flag_wbxspi2_seq extends mc_seq;
+class flag_wbxspi2_seq extends mc_seq1;
   `uvm_object_utils(flag_wbxspi2_seq)
 
   function new(string name = "flag_wbxspi2_seq");
@@ -208,7 +208,7 @@ class flag_wbxspi2_seq extends mc_seq;
   spi_slave_response_seq spi_seq;
 
   virtual task body;
-    `uvm_info(get_type_name(), "body of SPI2 flag mc_sequence 🧑🏻‍⚖️", UVM_FULL)
+    `uvm_info(get_type_name(), "body of SPI2 flag mc_seq1uence 🧑🏻‍⚖️", UVM_FULL)
     fork
       `uvm_do_on(wb_spi2_flag, p_sequencer.wb_seqr)
       `uvm_do_on(spi_seq, p_sequencer.spi2_seqr)
@@ -216,7 +216,7 @@ class flag_wbxspi2_seq extends mc_seq;
   endtask : body
 endclass : flag_wbxspi2_seq
 
-class stress_wbxspi_seq extends mc_seq;
+class stress_wbxspi_seq extends mc_seq1;
     
     `uvm_object_utils(stress_wbxspi_seq)
  
@@ -235,7 +235,7 @@ class stress_wbxspi_seq extends mc_seq;
 
 
 virtual task body;
-`uvm_info(get_type_name(), "body of mc_sequence 🧑🏻‍⚖️" , UVM_FULL)
+`uvm_info(get_type_name(), "body of mc_seq1uence 🧑🏻‍⚖️" , UVM_FULL)
 fork
 `uvm_do_on(wb_spi1_write, p_sequencer.wb_seqr)
 `uvm_do_on(spi_seq, p_sequencer.spi1_seqr)

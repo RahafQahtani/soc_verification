@@ -1,10 +1,10 @@
-class i2c_mc_seq extends uvm_sequence;
+class mc_seq extends uvm_sequence;
     
-    `uvm_object_utils(i2c_mc_seq)
+    `uvm_object_utils(mc_seq)
   
    //declare the multichannel_sequencer
     `ifndef SOC
-	   `uvm_declare_p_sequencer(i2c_mc_sequencer)
+	   `uvm_declare_p_sequencer(mc_sequencer)
     `else
 	   `uvm_declare_p_sequencer(soc_mcsequencer)
    `endif
@@ -18,7 +18,7 @@ class i2c_mc_seq extends uvm_sequence;
   i2c_write_to_wrong_addr_seq i2c_write_to_wrong_addr;
   i2c_write_while_busy_seq i2c_write_while_busy;
 
-    function new(string name ="i2c_mc_seq");
+    function new(string name ="mc_seq");
         super.new(name);
     endfunction:new
 
@@ -52,10 +52,10 @@ task pre_body();
 
 
 
-endclass: i2c_mc_seq
+endclass: mc_seq
 
 
-class i2c_write_mc_seq extends i2c_mc_seq;
+class i2c_write_mc_seq extends mc_seq;
     
     `uvm_object_utils(i2c_write_mc_seq)
  
@@ -85,7 +85,7 @@ endclass: i2c_write_mc_seq
 
 
 
-class i2c_read_mc_seq extends i2c_mc_seq;
+class i2c_read_mc_seq extends mc_seq;
     
     `uvm_object_utils(i2c_read_mc_seq)
  
@@ -118,7 +118,7 @@ endclass: i2c_read_mc_seq
 
 
 
-// class i2c_write_to_wrong_addr_mc_seq extends i2c_mc_seq;
+// class i2c_write_to_wrong_addr_mc_seq extends mc_seq;
     
 //     `uvm_object_utils(i2c_write_to_wrong_addr_mc_seq)
  
@@ -149,7 +149,7 @@ endclass: i2c_read_mc_seq
 
 
 
-// class i2c_write_while_busy_mc_seq extends i2c_mc_seq;
+// class i2c_write_while_busy_mc_seq extends mc_seq;
     
 //     `uvm_object_utils(i2c_write_while_busy_mc_seq)
  
@@ -178,7 +178,7 @@ endclass: i2c_read_mc_seq
 // endclass: i2c_write_while_busy_mc_seq
 
 
-// class i2c_multiple_write_mc_seq extends i2c_mc_seq;
+// class i2c_multiple_write_mc_seq extends mc_seq;
     
 //     `uvm_object_utils(i2c_multiple_write_mc_seq)
  
@@ -213,7 +213,7 @@ endclass: i2c_read_mc_seq
 
 
 
-// class i2c_multiple_read_mc_seq extends i2c_mc_seq;
+// class i2c_multiple_read_mc_seq extends mc_seq;
     
 //     `uvm_object_utils(i2c_multiple_read_mc_seq)
  

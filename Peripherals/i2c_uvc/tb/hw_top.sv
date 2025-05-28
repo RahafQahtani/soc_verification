@@ -86,17 +86,4 @@ pullup p2(iif.sda); // pullup sda line
  
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 endmodule:hw_top

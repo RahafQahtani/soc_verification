@@ -107,7 +107,7 @@ initial begin
     // uart_vif_config::set(null,"*tb.uartenv.*","vif",dut.in_uart); 
     spi_vif_config::set(null,"*.spienv1.slave_agent.*","vif",dut.in_spi1);
    spi_vif_config::set(null,"*.spienv2.slave_agent.*","vif",dut.in_spi2);
-   i2c_vif_config::set(null,"*.i2cenv.*","vif",dut.in_i2c);
+   i2c_vif_config::set(null,"*.i2cenv.slaves[0].*","vif",dut.in_i2c);
     wb_vif_config::set(null,"*.wbenv.*","vif",dut.in_wb);
     clock_and_reset_vif_config::set(null , "*.clk_rst_env.*" , "vif" , dut.clk_rst_if);
     
@@ -123,7 +123,8 @@ $dumpvars();
 end
 //
  initial begin
-#100000
+//#100000
+#55267000
  $finish;end
 
 

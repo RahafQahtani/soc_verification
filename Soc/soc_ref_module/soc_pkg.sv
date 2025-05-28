@@ -5,7 +5,8 @@ package soc_pkg ;
  import wb_pkg::*;
 import clock_and_reset_pkg::*;
 import spi_module_pkg::*;
-
+	import i2c_pkg::*;
+import i2c_module_pkg::*;
 
 // import uart_pkg::*;
 // import wb_pkg::*;

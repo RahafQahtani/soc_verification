@@ -1,15 +1,15 @@
 // // module hw_top;
 
-// //   logic clock,reset;
+// //   logic clock,~reset;
 // //   logic [31:0]  clock_period;
 // //   logic         run_clock;
 
 // // // logic cs,sclk ; 
 
 // // // uart_if in_uart(clock) ; 
-// // wb_if in_wb(clock,reset);
-// // spi_if in_spi1(clock,reset);
-// // spi_if in_spi2(clock,reset);
+// // wb_if in_wb(clock,~reset);
+// // spi_if in_spi1(clock,~reset);
+// // spi_if in_spi2(clock,~reset);
 
 // // //***************************************************
 // // //   SOC HW
@@ -21,7 +21,7 @@
 
 // // top_rv32i_soc DUT (
 // //   .CLK_PAD       (clock),
-// //   .RESET_N_PAD   (reset),
+// //   .RESET_N_PAD   (~reset),
 // //   .O_UART_TX_PAD (o_uart_tx_pad),
 // //   .I_UART_RX_PAD (i_uart_rx_pad),
 // //   .IO_DATA_PAD   (gpio_pads)
@@ -140,7 +140,7 @@
 
 // // clock_and_reset_if clk_rst_if (
 // //     .clock(clock),
-// //     .reset(reset),
+// //     .~reset(~reset),
 // //     .run_clock(run_clock),
 // //     .clock_period(clock_period)
 // // );
@@ -159,7 +159,7 @@
 //    logic [31:0]  clock_period;
 //   logic         run_clock;
 //   logic         clock;
-//   logic         reset;
+//   logic         ~reset;
 //   logic         STx_O;
 
 //     logic o_flash_sCLK_PAD;
@@ -180,7 +180,7 @@
 //     parameter NO_OF_GPIO_PINS = 24;
 
 //     logic CLK_PAD;  // external clock pad
-//     logic RESET_N_PAD;          // external reset (active low)
+//     logic RESET_N_PAD;          // external ~reset (active low)
 //     logic O_FLASH_SCLK_PAD;     // external SPI flash serial clock
 //     logic O_FLASH_CS_N_PAD;     // external SPI flash chip‐select (active low)
 //     logic O_FLASH_MOSI_PAD;     // external SPI flash MOSI
@@ -223,14 +223,14 @@
 
 
 //     assign CLK_PAD = clock;
-//     assign RESET_N_PAD = reset;
+//     assign RESET_N_PAD = ~reset;
 
 // // logic cs,sclk ; 
 
 // // uart_if in_uart(clock) ; 
-// wb_if in_wb(clock,reset);
-// spi_if in_spi1(clock,reset);
-// spi_if in_spi2(clock,reset);
+// wb_if in_wb(clock,~reset);
+// spi_if in_spi1(clock,~reset);
+// spi_if in_spi2(clock,~reset);
 
 // //***************************************************
 // //   SOC HW
@@ -240,7 +240,7 @@
 
 // // top_rv32i_soc DUT (
 // //   .CLK_PAD       (clock),
-// //   .RESET_PAD   (reset),
+// //   .RESET_PAD   (~reset),
 // //   .O_UART_TX_PAD (o_uart_tx_pad),
 // //   .I_UART_RX_PAD (i_uart_rx_pad),
 // //   .IO_DATA_PAD   (gpio_pads)
@@ -257,7 +257,7 @@
 //   //           .NO_OF_SHARED_PINS (13)
 //   //       )DUT(
 //   //         .clk (clock),
-//   //       .reset_n (reset)
+//   //       .reset_n (~reset)
 //   //   //tracer
 //   //       );
 
@@ -309,7 +309,7 @@
 
 // clock_and_reset_if clk_rst_if (
 //     .clock(clock),
-//     .reset(reset),
+//     .~reset(~reset),
 //     .run_clock(run_clock),
 //     .clock_period(clock_period)
 // );
@@ -326,16 +326,16 @@
 
 // module hw_top;
 
-//   logic clock,reset;
+//   logic clock,~reset;
 //   logic [31:0]  clock_period;
 //   logic         run_clock;
 
 // // logic cs,sclk ; 
 
 // // uart_if in_uart(clock) ; 
-// wb_if in_wb(clock,reset);
-// spi_if in_spi1(clock,reset);
-// spi_if in_spi2(clock,reset);
+// wb_if in_wb(clock,~reset);
+// spi_if in_spi1(clock,~reset);
+// spi_if in_spi2(clock,~reset);
 
 // //***************************************************
 // //   SOC HW
@@ -347,7 +347,7 @@
 
 // top_rv32i_soc DUT (
 //   .CLK_PAD       (clock),
-//   .RESET_N_PAD   (reset),
+//   .RESET_N_PAD   (~reset),
 //   .O_UART_TX_PAD (o_uart_tx_pad),
 //   .I_UART_RX_PAD (i_uart_rx_pad),
 //   .IO_DATA_PAD   (gpio_pads)
@@ -466,7 +466,7 @@
 
 // clock_and_reset_if clk_rst_if (
 //     .clock(clock),
-//     .reset(reset),
+//     .~reset(~reset),
 //     .run_clock(run_clock),
 //     .clock_period(clock_period)
 // );
@@ -506,7 +506,7 @@ module hw_top;
     parameter NO_OF_GPIO_PINS = 24;
 
     logic CLK_PAD;  // external clock pad
-    logic RESET_N_PAD;          // external reset (active low)
+    logic RESET_N_PAD;          // external ~reset (active low)
     logic O_FLASH_SCLK_PAD;     // external SPI flash serial clock
     logic O_FLASH_CS_N_PAD;     // external SPI flash chip‐select (active low)
     logic O_FLASH_MOSI_PAD;     // external SPI flash MOSI
@@ -549,49 +549,35 @@ module hw_top;
 
 
     assign CLK_PAD = clock;
-    assign RESET_N_PAD = reset;
+    assign RESET_N_PAD = ~reset;
 
 // logic cs,sclk ; 
 
 // uart_if in_uart(clock) ; 
-wb_if in_wb(clock,reset);
-spi_if in_spi1(clock,reset);
-spi_if in_spi2(clock,reset);
-i2c_if in_i2c(clock,reset);
+wb_if in_wb(clock,~reset);
+spi_if in_spi1(clock,~reset);
+spi_if in_spi2(clock,~reset);
+i2c_if in_i2c(clock,~reset);
 //***************************************************
 //   SOC HW
 //***************************************************
 
 
 
-// top_rv32i_soc DUT (
-//   .CLK_PAD       (clock),
-//   .RESET_PAD   (reset),
-//   .O_UART_TX_PAD (o_uart_tx_pad),
-//   .I_UART_RX_PAD (i_uart_rx_pad),
-//   .IO_DATA_PAD   (gpio_pads)
-//   // .I_TCK_PAD     (i_tck_pad),
-//   // .I_TMS_PAD     (i_tms_pad),
-//   // .I_TDI_PAD     (i_tdi_pad),
-//   // .O_TDO_PAD     (o_tdo_pad)
-// );
 
-  // rv32i_soc #(
-  //           .IMEM_DEPTH(128),
-  //           .DMEM_DEPTH(128),
-  //           .NO_OF_GPIO_PINS(24),
-  //           .NO_OF_SHARED_PINS (13)
-  //       )DUT(
-  //         .clk (clock),
-  //       .reset_n (reset)
-  //   //tracer
-  //       );
+
+
+
+
+
+
+
 
 top_rv32i_soc DUT (
   .*
 );
 
-
+//SPI 1&2 
 assign  in_spi1.cs=IO_DATA_PAD[11];
  assign in_spi1.sclk = IO_DATA_PAD[10];
  assign IO_DATA_PAD[9]= in_spi1.miso;
@@ -600,11 +586,26 @@ assign  in_spi1.cs=IO_DATA_PAD[11];
  assign in_spi2.sclk = IO_DATA_PAD[2];
  assign IO_DATA_PAD[1]= in_spi2.miso;
  assign in_spi2.mosi = IO_DATA_PAD[0];
+// I2C
+ logic scl_padoen_oe;
+logic sda_padoen_oe;
+logic scl_pad_o;
+logic sda_pad_o;
+assign in_i2c.scl = scl_padoen_oe ? 1'bz : scl_pad_o;
+assign in_i2c.sda = sda_padoen_oe ? 1'bz : sda_pad_o;
+pullup p1(in_i2c.scl);
+pullup p2(in_i2c.sda);
+    // Drive to I/O pads from SoC
+assign scl_pad_o= IO_DATA_PAD[13] ;
+assign  sda_pad_o=IO_DATA_PAD[14];
+   // Output enables from SoC
+assign scl_padoen_oe = DUT.u_rv32i_soc.o_scl_oen;
+assign sda_padoen_oe = DUT.u_rv32i_soc.o_sda_oen;
+  // Drive inputs into SoC
+assign DUT.u_rv32i_soc.i_scl = in_i2c.scl; //must disable io mux driver for it in soc 
+assign DUT.u_rv32i_soc.i_sda = in_i2c.sda; //must disable io mux driver for it in soc 
 
-assign in_i2c.scl=IO_DATA_PAD[13];
-assign IO_DATA_PAD[14]=in_i2c.sda;
-
-
+// WB 
  assign in_wb.ack = DUT.u_rv32i_soc.wb_s2m_io_ack;
    assign  in_wb.dout =DUT.u_rv32i_soc.wb_s2m_io_dat ;
 always @(*)begin 
@@ -612,26 +613,12 @@ always @(*)begin
   force DUT.u_rv32i_soc.wb_m2s_io_dat = in_wb.din;
   //there is no sel signal in the interface of the wb
   force DUT.u_rv32i_soc.wb_m2s_io_sel = 4'b1111; // assuming all bytes selected
-  
   force DUT.u_rv32i_soc.wb_m2s_io_we  = in_wb.we;
   force DUT.u_rv32i_soc.wb_m2s_io_stb = in_wb.stb;
   force DUT.u_rv32i_soc.wb_m2s_io_cyc = in_wb.cyc;
-  // force DUT.u_rv32i_soc.i_flash_miso=in_spi1.miso;
-  // force DUT.u_rv32i_soc.i_miso=in_spi2.miso;
-//  force sclk=DUT.u_rv32i_soc.o_flash_sclk;
-//   force cs=DUT.u_rv32i_soc.o_flash_cs_n;
-//     force in_spi1.mosi=DUT.u_rv32i_soc.o_flash_mosi;
-//     force DUT.u_rv32i_soc.i_flash_miso=in_spi1.miso;
-//  $display("hwtop:[%0t ns] ACK received=%b, for addr = %h, data = %h , cyc=%b,stb=%b", $time,
-//              DUT.u_rv32i_soc.wb_s2m_io_ack,DUT.u_rv32i_soc.wb_m2s_io_adr,
-//              DUT.u_rv32i_soc.wb_m2s_io_dat, DUT.u_rv32i_soc.wb_m2s_io_cyc,
-//              DUT.u_rv32i_soc.wb_m2s_io_stb);
-
 
 end
 
-
-// 
 
 
 

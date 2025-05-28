@@ -5,7 +5,7 @@ class testbench extends uvm_env;
   wb_env wb;
   clock_and_reset_env clk_rst;
   i2c_env i2c;
-  mc_sequencer mc_seqr;
+  mc_sequencer mcseqr;
 
 //Declare a handle for module uvc  "scoreboard"
   i2c_module  sb_module;
@@ -29,7 +29,7 @@ class testbench extends uvm_env;
     wb = wb_env::type_id::create("wb", this);
     clk_rst = clock_and_reset_env::type_id::create("clk_rst", this);
     i2c = i2c_env::type_id::create("i2c", this);
-    mc_seqr = mc_sequencer::type_id::create("mc_seqr", this);
+    mcseqr = mc_sequencer::type_id::create("mcseqr", this);
 
     // Create Scoreboard Module UVC
     sb_module = i2c_module::type_id::create("sb_module", this);
@@ -41,9 +41,9 @@ class testbench extends uvm_env;
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
 
-    //sequencers connection to mc_seqr
-    mc_seqr.wb_seqr = wb.masters[0].sequencer;
-    mc_seqr.i2c_seqr = i2c.slaves[0].sequencer;
+    //sequencers connection to mcseqr
+    mcseqr.wb_seqr = wb.masters[0].sequencer;
+    mcseqr.i2c_seqr = i2c.slaves[0].sequencer;
 
 
 

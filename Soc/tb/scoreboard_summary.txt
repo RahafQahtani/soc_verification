@@ -661,3 +661,218 @@ Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 5, Actual: 5 | Sta
 --------------------------------------------------
 Total Matched Packets : 2
 Total Mismatched Packets   : 0
+==================================================
+TEST:  | SEQ: 
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 17, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 05, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 76, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 6a, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: fe, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: ba, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 3d, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: da, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: fa, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 99, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: f0, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 00000031 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 00000031 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_write_byte_on_i2c | SEQ: i2c_write_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 0, Actual: 31 | Status: FAILED
+--------------------------------------------------
+Total Matched Packets : 0
+Total Mismatched Packets   : 1
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wb_read_byte_on_i2c | SEQ: i2c_read_mc_seq
+Sub Seq: I2C Data Compare | Peripheral: I2C | Result : Expected: 31, Actual: 31 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 1
+Total Mismatched Packets   : 0
+==================================================
+TEST: wbxspi1_flags_test | SEQ: flag_wbxspi1_seq
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 88, Actual: 88 | Status: PASSED
+Sub Seq: Compare SPSR | Peripheral: SPI1 | Result : Expected: 5, Actual: 5 | Status: PASSED
+--------------------------------------------------
+Total Matched Packets : 2
+Total Mismatched Packets   : 0

@@ -8,7 +8,7 @@ class wb_x_i2c_ref_model extends uvm_scoreboard;
 	uvm_analysis_imp_wb #(wb_transaction, wb_x_i2c_ref_model) wb_imp;
 	uvm_analysis_port #(wb_transaction) sbd_port;
 	
-     i2c_transaction i2c_queue[$];   
+    i2c_transaction i2c_queue[$];   
     wb_transaction wb_queue[$];  
 
 	function new(string name =get_type_name(), uvm_component parent);
@@ -33,13 +33,14 @@ class wb_x_i2c_ref_model extends uvm_scoreboard;
 
 
 	function void write_wb (wb_transaction t);
-        
+        // `uvm_info("i2c_Ref", $sformatf("Received i2c Transaction: %s", t.sprint()), UVM_FULL)
+                
         //deep copy 
         wb_transaction tr;
         $cast(tr, t.clone());
 
 
-		case(tr.addr[2:0])
+		case(tr.addr[4:2])
 
 			2'b000: 
 				begin
