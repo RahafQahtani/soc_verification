@@ -8,7 +8,9 @@ class base_test extends uvm_test;
 
   // Optional config objects
   string m_tb_name;
+   uvm_event_pool sbd_2_seq_event_pool;
 
+    mailbox #(wb_transaction) sync_mb;  // Global or passed via config_db
   // Constructor
   function new(string name = "base_test", uvm_component parent = null);
     super.new(name, parent);
@@ -23,7 +25,12 @@ class base_test extends uvm_test;
     m_tb_name = "tb_soc";
     tb_soc = soc_tb::type_id::create(m_tb_name, this);
 
-
+           `uvm_info(get_type_name(), "Inside build phase of base_test (test library class)", UVM_HIGH)
+	sync_mb = new();
+         sbd_2_seq_event_pool = new("sbd_2_seq_event_pool");       
+        uvm_config_db#(uvm_event_pool)::set(null, "*", "sbd_2_seq_event_pool",sbd_2_seq_event_pool);       
+	uvm_config_db#(mailbox#(wb_transaction))::set(null, "*", "sync_mb", sync_mb);       
+        uvm_config_db#(string)::set(null, "*", "m_tb_name",m_tb_name);  
     // Common testbench-wide config
       uvm_config_db#(string)::set(null, "*", "m_tb_name", m_tb_name);
     uvm_config_int::set(this, "tb_soc.wbenv.masters[0]", "is_active", UVM_ACTIVE);

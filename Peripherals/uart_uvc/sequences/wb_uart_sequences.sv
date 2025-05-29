@@ -1,8 +1,8 @@
 `ifndef SOC
-class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
+class wb_base_seq  extends uvm_sequence #(wb_transaction );
 
     int ok;
-    wishbone_transaction rsp;
+    wb_transaction  rsp;
 
     `uvm_object_utils(wb_base_seq)
 
@@ -57,10 +57,10 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     //Body task
     virtual task body();
       //Configuring the UART to communicate at baud rate = 9600, char_len = 8
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b10000011;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000010;})     //Writing to the MSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8'b10001011;})     //Writing to LSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00000011;})     //Writing 0 to the bit[7] of LCR to enable the normal access of registers.  endtask : body
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b10000011;rest_rf==0;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000010;rest_rf==0;})     //Writing to the MSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8'b10001011;rest_rf==0;})     //Writing to LSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00000011;rest_rf==0;})     //Writing 0 to the bit[7] of LCR to enable the normal access of registers.  endtask : body
     endtask : body
 
   endclass : UART_config_BD_9600_CL_8_PE_0
@@ -79,32 +79,32 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     //Body task
     virtual task body();
       //Configuring the UART to communicate at baud rate = 9600, char_len = 8, Even parity = 1, stop bit = 0
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b10011011;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000010;})     //Writing to the MSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8'b10001011;})     //Writing to LSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00011011;})     //Writing 0 to the bit[7] of LCR to enable the normal access of registers.  endtask : body
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b10011011;rest_rf==0;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000010;rest_rf==0;})     //Writing to the MSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8'b10001011;rest_rf==0;})     //Writing to LSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00011011;rest_rf==0;})     //Writing 0 to the bit[7] of LCR to enable the normal access of registers.  endtask : body
     endtask : body
 
   endclass : UART_config_BD_9600_CL_8_PE_1_Even_1_Stop_0
 
-  //Write to the interrupt enable register to enable the Receive data available interrupt
-  class Receive_Data_Available_Interrupt_Seq extends wb_base_seq;
+  //wb_write to the interrupt enable register to enable the Receive din available interrupt
+  class Receive_data_Available_Interrupt_Seq extends wb_base_seq;
 
     //Object macro
-    `uvm_object_utils(Receive_Data_Available_Interrupt_Seq)
+    `uvm_object_utils(Receive_data_Available_Interrupt_Seq)
 
     //Class Constructor
-    function new(string name = "Receive_Data_Available_Interrupt_Seq");
+    function new(string name = "Receive_data_Available_Interrupt_Seq");
       super.new(name);
     endfunction : new
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000001;})     //Write the bit 0 = 1 to enable the interrupt
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == WRITE; req.data == 8'b01000000;})     //Write to the FCR to set the trigger level = 4 bytes
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000001;rest_rf==0;})     //wb_write the bit 0 = 1 to enable the interrupt
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_write; req.din == 8'b01000000;rest_rf==0;})     //wb_write to the FCR to set the trigger level = 4 bytes
     endtask : body
 
-  endclass : Receive_Data_Available_Interrupt_Seq
+  endclass : Receive_data_Available_Interrupt_Seq
 
   //Reading the interrupt identification register
   class READ_IIR_For_Receive_Interrupt extends wb_base_seq;
@@ -123,17 +123,17 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     virtual task body();
       while(!IIR2)
         begin
-          rsp = wishbone_transaction::type_id::create("rsp");
-          `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == READ;})       //Reading the IIR register
+          rsp = wb_transaction ::type_id::create("rsp");
+          `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_read;rest_rf==0;})       //Reading the IIR register
           get_response(rsp); // get the response after item_done in driver
-          IIR2 = rsp.data[2];
+          IIR2 = rsp.din[2];
         end
       IIR2 = 0;
     endtask : body
 
   endclass : READ_IIR_For_Receive_Interrupt
 
-  //Seq to enable the Transmit holding register empty interrupt
+  //Seq to enable the op_typemit holding register empty interrupt
   class THR_Empty_Enable_Interrupt_Seq extends wb_base_seq;
 
     //Object macro
@@ -146,7 +146,7 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000010;})     //Writing to the IER to enable the THR empty interrupt
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000010;rest_rf==0;})     //Writing to the IER to enable the THR empty interrupt
     endtask : body
 
   endclass : THR_Empty_Enable_Interrupt_Seq
@@ -168,10 +168,10 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     virtual task body();
       while(!IIR1)
         begin
-          rsp = wishbone_transaction::type_id::create("rsp");
-          `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == READ;})
+          rsp = wb_transaction ::type_id::create("rsp");
+          `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_read;rest_rf==0;})
           get_response(rsp); // get the response after item_done in driver
-          IIR1 = rsp.data[1]; 
+          IIR1 = rsp.din[1]; 
         end
       IIR1 = 0;
     endtask : body
@@ -192,7 +192,7 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000100;})       //Writing to the bit 2 of IER to enable the Receiver Line Status interrupt 
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000100;rest_rf==0;})       //Writing to the bit 2 of IER to enable the Receiver Line Status interrupt 
     endtask : body
 
   endclass : Receiver_Line_Status_Interrupt_Seq
@@ -214,11 +214,11 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     virtual task body();
       while(!(IIR_1_2[1] && IIR_1_2[0]))
           begin
-            rsp = wishbone_transaction::type_id::create("rsp");
-            `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == READ;})
+            rsp = wb_transaction::type_id::create("rsp");
+            `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_read;rest_rf==0;})
             get_response(rsp); // get the response after item_done in driver
-            IIR_1_2[0] = rsp.data[0]; 
-            IIR_1_2[1] = rsp.data[1]; 
+            IIR_1_2[0] = rsp.din[0]; 
+            IIR_1_2[1] = rsp.din[1]; 
           end
         IIR_1_2 = 0;
 
@@ -239,12 +239,12 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000000;})     //Writing the reset value in IER
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000000;rest_rf==0;})     //Writing the reset value in IER
     endtask : body
 
   endclass : Empty_IER
 
-  //Writing the data to the transmitter holding register to be used for transmission
+  //Writing the din to the op_typemitter holding register to be used for op_typemission
   class THR_Data extends wb_base_seq;
 
     //Object macro
@@ -257,27 +257,27 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 1;})
-//        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 2;})
-  //      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 3;})
-    //    `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 4;})
-      //  `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 5;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 6;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 7;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 9;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 10;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 11;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 12;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 13;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 14;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 15;})
-        // `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 16;})
+        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 1;rest_rf==0;})
+//        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 2;})
+  //      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 3;})
+    //    `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 4;})
+      //  `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 5;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 6;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 7;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 9;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 10;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 11;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 12;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 13;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 14;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 15;})
+        // `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 16;})
     endtask : body
 
   endclass : THR_Data
 
-  //Writing the data to the transmitter holding register to be used for transmission
+  //Writing the din to the op_typemitter holding register to be used for op_typemission
   class THR_Data_Greater_10 extends wb_base_seq;
 
     //Object macro
@@ -290,34 +290,34 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 11;})
-        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 22;})
-        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 33;})
-        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 44;})
-        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 55;})
+        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 11;rest_rf==0;})
+        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 22;rest_rf==0;})
+        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 33;rest_rf==0;})
+        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 44;rest_rf==0;})
+        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 55;rest_rf==0;})
 
     endtask : body
 
   endclass : THR_Data_Greater_10
 
-  //Reset Transmitt and Receive FIFO
-  class Reset_Transmit_Receive_FIFO extends wb_base_seq;
+  //Reset op_typemitt and Receive FIFO
+  class Reset_op_typemit_Receive_FIFO extends wb_base_seq;
 
     //Object macro
-    `uvm_object_utils(Reset_Transmit_Receive_FIFO)
+    `uvm_object_utils(Reset_op_typemit_Receive_FIFO)
 
     //Class Constructor
-    function new(string name = "Reset_Transmit_Receive_FIFO");
+    function new(string name = "Reset_op_typemit_Receive_FIFO");
       super.new(name);
     endfunction : new
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == WRITE; req.data == 8'b11000110;})     //Writing to the FCR to clear the transmit and receive FIFO
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*5; req.trans == READ;})                               //Reading from the LSR register to see the status of its bit 0(indicating whether Receive FIFO is empty or not) and bit 6(indicating whether Transmitter FIFO is emptyor not)
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_write; req.din == 8'b11000110;rest_rf==0;})     //Writing to the FCR to clear the op_typemit and receive FIFO
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*5; req.op_type == wb_read;rest_rf==0;})                               //Reading from the LSR register to see the status of its bit 0(indicating whether Receive FIFO is empty or not) and bit 6(indicating whether op_typemitter FIFO is emptyor not)
     endtask : body
 
-  endclass : Reset_Transmit_Receive_FIFO
+  endclass : Reset_op_typemit_Receive_FIFO
 
   //Clearing the FCR
   class Clear_FCR extends wb_base_seq;
@@ -332,7 +332,7 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == WRITE; req.data == 8'b11000000;})   //Setting the FCR to its initial value
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_write; req.din == 8'b11000000;rest_rf==0;})   //Setting the FCR to its initial value
     endtask : body
 
   endclass : Clear_FCR
@@ -350,10 +350,10 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b10101011;})     //Writing to the LCR to configure the UART
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000010;})     //Writing to the MSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8'b10001011;})     //Writing to LSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00101011;})     //Writing to the LCR to disable the divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b10101011;rest_rf==0;})     //Writing to the LCR to configure the UART
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000010;rest_rf==0;})     //Writing to the MSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8'b10001011;rest_rf==0;})     //Writing to LSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00101011;rest_rf==0;})     //Writing to the LCR to disable the divisor latch
     endtask : body
 
   endclass : UART_config_BD_9600_CL_8_PE_1_Even_1_Stop_0_SP_1
@@ -371,15 +371,15 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == READ;})
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == READ;})
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == READ;})
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*5; req.trans == READ;})
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_read;})
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_read;})
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_read;})
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*5; req.op_type == wb_read;})
     endtask : body
 
   endclass : Read_after_Reset
 
-  //Sequence to poll until  the transmit FIFO becomes empty
+  //Sequence to poll until  the op_typemit FIFO becomes empty
   class Read_LSR6 extends wb_base_seq;
     bit LSR6 = 0;
     //Object macro
@@ -395,13 +395,13 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     virtual task body();
       while(!LSR6)
         begin
-          rsp = wishbone_transaction::type_id::create("rsp");
-          `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*5; req.trans == READ;})
+          rsp = wb_transaction ::type_id::create("rsp");
+          `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*5; req.op_type == wb_read;})
           get_response(rsp); // get the response after item_done in driver
-          LSR6 = rsp.data[6]; // LSR bit 5 indicates receiver data ready
+          LSR6 = rsp.din[6]; // LSR bit 5 indicates receiver din ready
         end
       LSR6 = 0;
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*5; req.trans == READ;})
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*5; req.op_type == wb_read;})
     endtask : body
 
 
@@ -420,7 +420,7 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*4; req.trans == WRITE; req.data == 8'b00010000;})
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*4; req.op_type == wb_write; req.din == 8'b00010000;})
     endtask : body
 
 
@@ -441,7 +441,7 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     //Body task
     virtual task body();
       repeat(2)
-        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == READ;})
+        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_read;})
     endtask : body
 
   endclass : Read_Receive_FIFO
@@ -461,10 +461,10 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     //Body task
     virtual task body();
       //Configuring the UART to communicate at baud rate = 9600, char_len = 8
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b10000011;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000101;})     //Writing to the MSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8'b00010110;})     //Writing to LSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00000011;})     //Writing 0 to the bit[7] of LCR to enable the normal access of registers.  endtask : body
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b10000011;rest_rf==0;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000101;rest_rf==0;})     //Writing to the MSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8'b00010110;rest_rf==0;})     //Writing to LSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00000011;rest_rf==0;})     //Writing 0 to the bit[7] of LCR to enable the normal access of registers.  endtask : body
     endtask : body
 
   endclass : UART_config_BD_4800_CL_8_PE_0
@@ -484,10 +484,10 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     //Body task
     virtual task body();
       //Configuring the UART to communicate at baud rate = 9600, char_len = 8
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b10000011;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000000;})     //Writing to the MSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8'b00110110;})     //Writing to LSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00000011;})     //Writing 0 to the bit[7] of LCR to enable the normal access of registers.  endtask : body
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b10000011;rest_rf==0;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000000;rest_rf==0;})     //Writing to the MSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8'b00110110;rest_rf==0;})     //Writing to LSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00000011;rest_rf==0;})     //Writing 0 to the bit[7] of LCR to enable the normal access of registers.  endtask : body
     endtask : body
 
   endclass : UART_config_BD_115200_CL_8_PE_0
@@ -506,7 +506,7 @@ class wb_base_seq  extends uvm_sequence #(wishbone_transaction);
     //Body task
     virtual task body();
       //Configuring the UART to communicate at baud rate = 9600, char_len = 8
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00011011;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00011011;rest_rf==0;})      //Writing to the LCR(To access the divisor latch, setting the bit [7] of LCR to 1.)
     endtask : body
 
   endclass : Enable_Parity_Even_1
@@ -524,7 +524,7 @@ class Read_IIR extends wb_base_seq;
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == READ;})      //Reading IIR
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_read;rest_rf==0;})      //Reading IIR
     endtask : body  
 
 endclass : Read_IIR
@@ -542,12 +542,12 @@ class Read_LSR extends wb_base_seq;
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*5; req.trans == READ;})      //Reading IIR
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*5; req.op_type == wb_read;rest_rf==0;})      //Reading IIR
     endtask : body  
 
 endclass : Read_LSR
 
-//Sequence to write reset bit in FCR for Rx FIFO
+//Sequence to wb_write reset bit in FCR for Rx FIFO
 class Write_Reset_For_Rx_FIFO_in_FCR extends wb_base_seq;
 
     //Object macro
@@ -560,7 +560,7 @@ class Write_Reset_For_Rx_FIFO_in_FCR extends wb_base_seq;
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == WRITE; req.data == 8'b01000010;})      //Writing FCR to clear Rx FIFO
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_write; req.din == 8'b01000010;rest_rf==0;})      //Writing FCR to clear Rx FIFO
     endtask : body  
 
 endclass  : Write_Reset_For_Rx_FIFO_in_FCR
@@ -578,12 +578,12 @@ class Clear_Reset_For_Rx_FIFO_in_FCR extends wb_base_seq;
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == WRITE; req.data == 8'b01000000;})      //Writing FCR to clear Rx bit
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_write; req.din == 8'b01000000;rest_rf==0;})      //Writing FCR to clear Rx bit
     endtask : body  
 
 endclass  : Clear_Reset_For_Rx_FIFO_in_FCR
 
-//Sequence to write reset bit in FCR for THR
+//Sequence to wb_write reset bit in FCR for THR
 class Write_Reset_For_THR_FIFO_in_FCR extends wb_base_seq;
 
     //Object macro
@@ -596,7 +596,7 @@ class Write_Reset_For_THR_FIFO_in_FCR extends wb_base_seq;
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == WRITE; req.data == 8'b01000100;})      //Writing FCR to clear THR FIFO
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_write; req.din == 8'b01000100;rest_rf==0;})      //Writing FCR to clear THR FIFO
     endtask : body  
 
 endclass  : Write_Reset_For_THR_FIFO_in_FCR
@@ -614,7 +614,7 @@ class Clear_Reset_For_THR_FIFO_in_FCR extends wb_base_seq;
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*2; req.trans == WRITE; req.data == 8'b01000000;})      //Writing FCR to clear THR FIFO reset bit
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*2; req.op_type == wb_write; req.din == 8'b01000000;rest_rf==0;})      //Writing FCR to clear THR FIFO reset bit
     endtask : body  
 
 endclass  : Clear_Reset_For_THR_FIFO_in_FCR
@@ -632,10 +632,10 @@ endclass  : Clear_Reset_For_THR_FIFO_in_FCR
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b10001000;})     //Writing to the LCR to configure the UART
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000010;})     //Writing to the MSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8'b10001011;})     //Writing to LSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00001000;})     //Writing to the LCR to disable the divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b10001000;rest_rf==0;})     //Writing to the LCR to configure the UART
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000010;rest_rf==0;})     //Writing to the MSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8'b10001011;rest_rf==0;})     //Writing to LSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00001000;rest_rf==0;})     //Writing to the LCR to disable the divisor latch
     endtask : body
 
   endclass : UART_config_BD_9600_CL_5_PE_1_Even_0_Stop_0
@@ -653,10 +653,10 @@ endclass  : Clear_Reset_For_THR_FIFO_in_FCR
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b10001001;})     //Writing to the LCR to configure the UART
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000010;})     //Writing to the MSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8'b10001011;})     //Writing to LSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00001001;})     //Writing to the LCR to disable the divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b10001001;rest_rf==0;})     //Writing to the LCR to configure the UART
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000010;rest_rf==0;})     //Writing to the MSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8'b10001011;rest_rf==0;})     //Writing to LSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00001001;rest_rf==0;})     //Writing to the LCR to disable the divisor latch
     endtask : body
 
   endclass : UART_config_BD_9600_CL_6_PE_1_Even_0_Stop_0
@@ -674,10 +674,10 @@ endclass  : Clear_Reset_For_THR_FIFO_in_FCR
 
     //Body task
     virtual task body();
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b10001010;})     //Writing to the LCR to configure the UART
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.trans == WRITE; req.data == 8'b00000010;})     //Writing to the MSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*0; req.trans == WRITE; req.data == 8'b10001011;})     //Writing to LSBs of Divisor latch
-      `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*3; req.trans == WRITE; req.data == 8'b00001001;})     //Writing to the LCR to disable the divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b10001010;rest_rf==0;})     //Writing to the LCR to configure the UART
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.op_type == wb_write; req.din == 8'b00000010;rest_rf==0;})     //Writing to the MSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*0; req.op_type == wb_write; req.din == 8'b10001011;rest_rf==0;})     //Writing to LSBs of Divisor latch
+      `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*3; req.op_type == wb_write; req.din == 8'b00001001;rest_rf==0;})     //Writing to the LCR to disable the divisor latch
     endtask : body
 
   endclass : UART_config_BD_9600_CL_7_PE_1_Even_0_Stop_0
@@ -703,7 +703,7 @@ endclass  : Clear_Reset_For_THR_FIFO_in_FCR
 
 
 
-//Test for configuring the UART before transmission
+//Test for configuring the UART before op_typemission
 class Config_for_Rx_trigger_equal_4 extends wb_base_seq;
   bit LSR0;
 
@@ -717,12 +717,12 @@ class Config_for_Rx_trigger_equal_4 extends wb_base_seq;
 
   //Body task
   virtual task body();
-    `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*1; req.data == 8'b00000001; req.trans == WRITE;})   //Writing into the IER
+    `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*1; req.din == 8'b00000001; req.op_type == wb_write;rest_rf==0;})   //Writing into the IER
     while(!LSR0)    //Polling until bit 0 of LSR becomes 1
       begin
-        `uvm_do_with(req, {req.adr_i == `UART_BASE_ADDRESS+`OFFSET*5; req.trans == READ;})     //Reading from LSR until its bit 0 becomes 1
+        `uvm_do_with(req, {req.addr == `UART_BASE_ADDRESS+`OFFSET*5; req.op_type == wb_read;rest_rf==0;})     //Reading from LSR until its bit 0 becomes 1
         get_response(rsp); // get the response after item_done in driver
-        LSR0 = rsp.data[0]; // LSR bit 0 indicates receiver data ready
+        LSR0 = rsp.din[0]; // LSR bit 0 indicates receiver din ready
       end
       LSR0 = 0;
   endtask : body

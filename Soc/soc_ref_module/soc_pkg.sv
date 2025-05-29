@@ -8,9 +8,10 @@ import spi_module_pkg::*;
 	import i2c_pkg::*;
 import i2c_module_pkg::*;
 
-// import uart_pkg::*;
-// import wb_pkg::*;
+import uart_pkg::*;
+import wb_uart_module_pkg::*;
 
+`include "wb_uart_ref_model.sv"
 `include "wb_ref_model.sv"
 `include "soc_scb.sv"
 `include "soc_ref_env.sv"

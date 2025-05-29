@@ -5,7 +5,7 @@ class wb_master_driver extends uvm_driver #(wb_transaction);
 
   // Master Id
   int master_id;
-
+   wb_transaction rsp;
 
   `uvm_component_utils_begin(wb_master_driver)
     `uvm_field_int(master_id, UVM_DEFAULT)
@@ -27,11 +27,18 @@ class wb_master_driver extends uvm_driver #(wb_transaction);
     
     forever begin
       // Get new item from the sequencer
+               rsp = wb_transaction::type_id::create("rsp");
       seq_item_port.get_next_item(req);
 `uvm_info("DRV", $sformatf("Received txn: op=%0d, addr=%h, data=%h", req.op_type, req.addr, req.din), UVM_MEDIUM)
 
       `uvm_info(get_type_name(), req.sprint() ,UVM_MEDIUM)
       vif.send_to_dut(req);
+      rsp.din = vif.dout;
+         rsp.addr = vif.addr;
+         rsp.set_sequence_id(req.get_sequence_id());
+         // Send back response to sequencer
+         seq_item_port.put_response(rsp);
+        // end_tr(req);
       seq_item_port.item_done();
       //put_response(rsp);
 

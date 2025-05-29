@@ -7,7 +7,7 @@ class wishbone_mcseqs_lib extends uvm_sequence;
     Enable_Loopback wb_LB_Enable;
     Enable_Loopback wb_Loop_Back_mode;
     Read_Receive_FIFO wb_Read_Rx_FIFO;
-    Receive_Data_Available_Interrupt_Seq wb_receive_interrupt;
+    Receive_data_Available_Interrupt_Seq wb_receive_interrupt;
     READ_IIR_For_Receive_Interrupt wb_Receive_interrupt_Read;
     UART_config_BD_4800_CL_8_PE_0 wb_BD_4800_CL_8_PE_0_Stop_0;
     UART_config_BD_115200_CL_8_PE_0 wb_BD_115200_CL_8_PE_0_Stop_0;
@@ -103,11 +103,12 @@ class Data_Transmitted_equals_data_in_FIFO extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_9600_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        // `uvm_do_on(wb_Loop_Back_mode, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_transmit_data, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR6_bit, p_sequencer.m_wb_sequencer)
-        // `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
+        `uvm_info("mceq","in multi seq",UVM_LOW)
+        `uvm_do_on(wb_BD_9600_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        // `uvm_do_on(wb_Loop_Back_mode, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_transmit_data, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR6_bit, p_sequencer.wb_seqr)
+        // `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
     endtask : body
 
 
@@ -126,11 +127,11 @@ class Data_Received_equals_Data_in_FIFO extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_9600_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_9600_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_9600_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_9600_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Data_Received_equals_Data_in_FIFO
@@ -149,9 +150,9 @@ class Data_Transmitted_equals_data_in_FIFO_BD_4800 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_4800_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_transmit_data, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR6_bit, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_4800_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_transmit_data, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR6_bit, p_sequencer.wb_seqr)
     endtask : body
 
 
@@ -171,9 +172,9 @@ class Data_Transmitted_equals_data_in_FIFO_BD_115200 extends wishbone_mcseqs_lib
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_transmit_data, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR6_bit, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_transmit_data, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR6_bit, p_sequencer.wb_seqr)
 
     endtask : body
 
@@ -193,11 +194,11 @@ class Data_Received_equals_Data_in_FIFO_BD_4800 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_4800_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_4800_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_4800_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_4800_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Data_Received_equals_Data_in_FIFO_BD_4800
@@ -215,11 +216,11 @@ class Data_Received_equals_Data_in_FIFO_BD_115200 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_115200_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_115200_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Data_Received_equals_Data_in_FIFO_BD_115200
@@ -237,14 +238,14 @@ class BAD_PARITY_BD_115200_EVEN_1 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Parity_1_Even_1, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_115200_p_1_BAD, p_sequencer.m_uart_tx_sequencer)
-   //     `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Parity_1_Even_1, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_115200_p_1_BAD, p_sequencer.uart_tx_seqr)
+   //     `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : BAD_PARITY_BD_115200_EVEN_1
@@ -263,14 +264,14 @@ class BAD_PARITY_BD_4800_EVEN_1 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_4800_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Parity_1_Even_1, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_4800_p_1_BAD, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_4800_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Parity_1_Even_1, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_4800_p_1_BAD, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : BAD_PARITY_BD_4800_EVEN_1
@@ -288,13 +289,13 @@ class Framing_Error_BD_115200_Stop_0 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        // `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_115200_Stop_0, p_sequencer.m_uart_tx_sequencer)
-        // `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        // `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_115200_Stop_0, p_sequencer.uart_tx_seqr)
+        // `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR, p_sequencer.wb_seqr)
     endtask : body
 
 
@@ -313,12 +314,12 @@ class Reset_Receiver_FIFO_BD_115200 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_115200_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_115200_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
 
     endtask : body
 
@@ -337,18 +338,18 @@ class Reset_Rx_FIFO_BD_115200 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_115200_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Rx_FIFO_reset, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Rx_FIFO_reset_Clear, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frames_115200_p_0_Directed_Data, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_115200_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Rx_FIFO_reset, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Rx_FIFO_reset_Clear, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frames_115200_p_0_Directed_Data, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Reset_Rx_FIFO_BD_115200
@@ -366,14 +367,14 @@ class Reset_THR_FIFO_BD_115200 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_transmit_data, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_THR_FIFO_reset, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_THR_FIFO_reset_Clear, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_transmit_data_greater_10, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR6_bit, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_LSR, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_115200_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_transmit_data, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_THR_FIFO_reset, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_THR_FIFO_reset_Clear, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_transmit_data_greater_10, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR6_bit, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_LSR, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Reset_THR_FIFO_BD_115200
@@ -391,11 +392,11 @@ class Data_Received_equals_Data_in_FIFO_BD_9600_Char_Len_5 extends wishbone_mcse
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_9600_CL_5_PE_1_Stop_0, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_9600_CL_5_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_9600_CL_5_PE_1_Stop_0, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_9600_CL_5_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Data_Received_equals_Data_in_FIFO_BD_9600_Char_Len_5
@@ -413,11 +414,11 @@ class Data_Received_equals_Data_in_FIFO_BD_9600_Char_Len_6 extends wishbone_mcse
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_9600_CL_6_PE_1_Stop_0, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_9600_CL_6_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_9600_CL_6_PE_1_Stop_0, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_9600_CL_6_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Data_Received_equals_Data_in_FIFO_BD_9600_Char_Len_6
@@ -435,11 +436,11 @@ class Data_Received_equals_Data_in_FIFO_BD_9600_Char_Len_7 extends wishbone_mcse
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_9600_CL_7_PE_1_Stop_0, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_9600_CL_7_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_9600_CL_7_PE_1_Stop_0, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_9600_CL_7_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Data_Received_equals_Data_in_FIFO_BD_9600_Char_Len_7
@@ -457,15 +458,15 @@ class Receive_Data_Available_Interrupt_BD_9600 extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_9600_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_receive_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_9600_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_9600_p_0, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_9600_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_receive_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_9600_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Receive_interrupt_Read, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_9600_p_0, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Receive_Data_Available_Interrupt_BD_9600
@@ -483,13 +484,13 @@ class THR_Empty_Interrupt extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_9600_CL_8_PE_0_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_THR_Empty_Interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_transmit_data, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR1, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_transmit_data_greater_10, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_9600_CL_8_PE_0_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_THR_Empty_Interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_transmit_data, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR1, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_transmit_data_greater_10, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : THR_Empty_Interrupt
@@ -507,14 +508,14 @@ class Receiver_Line_Status_Interrupt extends wishbone_mcseqs_lib;
 
     //Body task
     virtual task body();
-        `uvm_do_on(wb_BD_9600_CL_8_PE_1_Stop_0 , p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Receiver_Line_Status_interrupt, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_9600_p_1_BAD, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
-        `uvm_do_on(uart_frame_9600_p_1_BAD, p_sequencer.m_uart_tx_sequencer)
-        `uvm_do_on(wb_Read_IIR, p_sequencer.m_wb_sequencer)
+        `uvm_do_on(wb_BD_9600_CL_8_PE_1_Stop_0 , p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Receiver_Line_Status_interrupt, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_9600_p_1_BAD, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_Rx_FIFO, p_sequencer.wb_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
+        `uvm_do_on(uart_frame_9600_p_1_BAD, p_sequencer.uart_tx_seqr)
+        `uvm_do_on(wb_Read_IIR, p_sequencer.wb_seqr)
     endtask : body
 
 endclass : Receiver_Line_Status_Interrupt
