@@ -81,3 +81,90 @@ class mcsequencer_simple_test extends base_test;
     endfunction: build_phase
 
 endclass : mcsequencer_simple_test
+
+//====================================================
+//=================  C toggle test ===================
+//====================================================
+class spi1_C_toggle_test extends base_test;
+
+    `uvm_component_utils(spi1_C_toggle_test)
+
+    //Class contructor
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
+
+    //Build phase
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        //Default sequence of clock and reset sequencer
+        uvm_config_wrapper::set(this, "tb_soc.clk_rst_env.agent.sequencer.run_phase",
+                                "default_sequence", clk10_rst5_seq::get_type());
+
+        uvm_config_wrapper::set(this,"tb_soc.mcseqr.run_phase","default_sequence", C_toggle_seq::get_type());
+
+       uvm_config_db#(string)::set(null, "*", "spi1_C_toggle_test", get_type_name());   //commented
+
+
+    endfunction: build_phase
+
+endclass : spi1_C_toggle_test
+
+
+//====================================================
+//=================  C write test ===================
+//====================================================
+class spi1_C_write_test extends base_test;
+
+    `uvm_component_utils(spi1_C_write_test)
+
+    //Class contructor
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
+
+    //Build phase
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        //Default sequence of clock and reset sequencer
+        uvm_config_wrapper::set(this, "tb_soc.clk_rst_env.agent.sequencer.run_phase",
+                                "default_sequence", clk10_rst5_seq::get_type());
+        uvm_config_wrapper::set(this,"tb_soc.mcseqr.run_phase",
+                                "default_sequence", C_write_seq::get_type());
+
+        uvm_config_db#(string)::set(null, "*", "spi1_C_write_test", get_type_name());   
+    `uvm_info("TEST_SPI!_C_TEST" ,"Inside Build phase", UVM_HIGH)
+
+
+    endfunction: build_phase
+
+endclass : spi1_C_write_test
+
+//====================================================
+//=================  C read test ===================
+//====================================================
+
+class spi1_C_read_test extends base_test;
+
+    `uvm_component_utils(spi1_C_read_test)
+
+    //Class contructor
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction : new
+
+    //Build phase
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        //Default sequence of clock and reset sequencer
+        uvm_config_wrapper::set(this, "tb_soc.clk_rst_env.agent.sequencer.run_phase",
+                                "default_sequence", clk10_rst5_seq::get_type());
+        uvm_config_wrapper::set(this, "tb_soc.mcseqr.run_phase",
+                                "default_sequence", C_read_seq::get_type());
+
+        uvm_config_db#(string)::set(null, "*", "CUR_TEST_NAME", get_type_name());   
+
+
+    endfunction: build_phase
+
+endclass : spi1_C_read_test

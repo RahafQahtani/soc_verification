@@ -167,7 +167,11 @@ import soc_pkg::* ;
 hw_top dut();
 
 
+    logic [31:0] inst_mem [8192];
 initial begin
+ $readmemh("../../cscripts/inst_formatted.hex", inst_mem);
+force dut.DUT.u_rv32i_soc.inst_mem_inst.tsmc_32k_inst.u0.mem_core_array = inst_mem;
+
     //=============================================
 
 //check path
