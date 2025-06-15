@@ -1,0 +1,30 @@
+# 🧭 Git Submodule Command Guide
+
+# 🔍 Check submodule status
+git submodule status
+# Shows the current commit hash and path of each submodule
+
+# 🔄 Initialize and pull submodules
+git submodule update --init --recursive
+# Clones and checks out all submodules (use after clone)
+
+# 🆕 Add a new submodule
+git submodule add <repo-url> <path>
+# Example:
+# git submodule add https://github.com/user/repo.git libs/mylib
+
+# 🔁 Update all submodules to latest remote commit (if tracking a branch)
+git submodule update --recursive --remote
+
+# ❌ Remove a submodule (cleanly)
+git submodule deinit -f <path>
+git rm -f <path>
+rm -rf .git/modules/<path>
+# Also edit .gitmodules and .git/config if needed
+
+# 🧮 List all declared submodules
+cat .gitmodules
+
+# 🛠 Sync and force reinitialize submodules (useful for broken states)
+git submodule sync
+git submodule update --init --force --recursive

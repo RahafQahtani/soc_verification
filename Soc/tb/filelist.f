@@ -35,6 +35,10 @@ defines.sv
   
 // ========== UART ==========  //NEED TO BE UPDATED
 
+//======================
+//====📝NOTE by Reda: i have commented below temperrarly
+//======================
+
 +incdir+../../Peripherals/uart_uvc/sv
 +incdir+../../Peripherals/uart_uvc/uart/sv
 +incdir+../../Peripherals/uart_uvc/wb_uart_module/sv
@@ -44,6 +48,10 @@ defines.sv
 ../../Peripherals/uart_uvc/uart/sv/uart_pkg.sv          //UART pkg should be there
 ../../Peripherals/uart_uvc/uart/sv/uart_if.sv           //This is UART interface
 ../../Peripherals/uart_uvc/wb_uart_module/sv/wb_uart_module_pkg.sv      
+
+//======================
+//====📝 NOTE by Reda: i have commented below temperrarly
+//======================
 
 // ========== I2C ========== 
 +incdir+../../Peripherals/i2c_uvc/sv 

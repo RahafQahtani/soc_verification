@@ -1,16 +1,6 @@
-[submodule "RV32_SoC"]
-	path = RV32_SoC
-	url = https://github.com/Nehal-2/RV32_SoC.git
-[submodule "Peripherals/uart_uvc"]
-	path = Peripherals/uart_uvc
-	url = https://github.com/RedaM4/uart_wb_uvcs.git
-
-[submodule "Peripherals/uart_uvc/core-verification"]
-	path = Peripherals/uart_uvc/core-verification
-	url = https://github.com/google/riscv-dv.git
-
-
-
+# [submodule "Peripherals/uart_uvc/core-verification"]
+# 	path = Peripherals/uart_uvc/core-verification
+# 	url = https://github.com/google/riscv-dv.git
 
 
 
@@ -35,3 +25,9 @@
 
 # git submodule add https://github.com/yaserc33/i2c_uvc.git Peripherals/i2c_uvc
 #git submodule update --init --recursive
+[submodule "RV32_SoC"]
+	path = RV32_SoC
+	url = https://github.com/Nehal-2/RV32_SoC.git
+[submodule "Peripherals/uart_uvc"]
+	path = Peripherals/uart_uvc
+	url = https://github.com/RedaM4/uart_wb_uvcs.git

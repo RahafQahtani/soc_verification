@@ -1,5 +1,0 @@
-
-`define UART_BASE_ADDRESS 32'h20000000
-`define UART_END_ADDRESS  32'h200000FF
-
-`define offset 1
